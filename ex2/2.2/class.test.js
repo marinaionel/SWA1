@@ -1,14 +1,14 @@
 const { test, expect } = require("@jest/globals");
+const c = require("./class");
 
-const c = require("./concatenative_inheritance");
 test("Event creation", () => {
-  let e = c.Event_(Date(2021, 1, 1), "London");
+  let e = new c.Event_(Date(2021, 1, 1), "London");
   expect(e.getPlace()).toBe("London");
   expect(e.getTime()).toBe(Date(2021, 1, 1));
 });
 
 test("DataType creation", () => {
-  let d = c.DataType("precipitations", "MM");
+  let d = new c.DataType("precipitations", "MM");
   expect(d.getType()).toBe("precipitations");
   expect(d.getUnit()).toBe("MM");
   d.setUnit("F");
@@ -16,7 +16,7 @@ test("DataType creation", () => {
 });
 
 test("WeatherData creation", () => {
-  let wd = c.WeatherData(
+  let wd = new c.WeatherData(
     Date(2020, 3, 3),
     "Horsens",
     "precipitations",
@@ -35,7 +35,7 @@ test("WeatherData creation", () => {
 });
 
 test("WeatherPrediction creation", () => {
-  let wp = c.WeatherPrediction(
+  let wp = new c.WeatherPrediction(
     Date(2020, 1, 1),
     "Vejle",
     "wind",
@@ -50,7 +50,7 @@ test("WeatherPrediction creation", () => {
 });
 
 test("WeatherPrediction matches", () => {
-  let wp = c.WeatherPrediction(
+  let wp = new c.WeatherPrediction(
     Date(2020, 1, 1),
     "Vejle",
     "wind",
@@ -59,33 +59,39 @@ test("WeatherPrediction matches", () => {
     100
   );
 
-  let wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 34);
+  let wd1 = new c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 34);
   expect(wp.matches(wd1)).toBe(true);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 101);
+  wd1 = new c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 101);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "London", "wind", "MPH", 10);
+  wd1 = new c.WeatherData(Date(2020, 1, 1), "London", "wind", "MPH", 10);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "precipitation", "MPH", 10);
+  wd1 = new c.WeatherData(
+    Date(2020, 1, 1),
+    "Vejle",
+    "precipitation",
+    "MPH",
+    10
+  );
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MS", 34);
+  wd1 = new c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MS", 34);
   expect(wp.matches(wd1)).toBe(false);
 });
 
 test("Temperature creation", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+  let t = new c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
   expect(t.getPlace()).toBe("Vejle");
   expect(t.getTime()).toBe(Date(2020, 2, 5));
 });
 
 test("Temperature convertion 1", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+  let t = new c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
   t.convertToC();
   expect(t.getUnit()).toBe("C");
   expect(t.getValue()).toBe(23);
 });
 
 test("Temperature convertion 2", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+  let t = new c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
   t.convertToF();
   expect(t.getUnit()).toBe("F");
   expect(t.getValue()).toBe(73.4);

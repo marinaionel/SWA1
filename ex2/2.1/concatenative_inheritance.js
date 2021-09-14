@@ -1,7 +1,7 @@
 // Concatenative inheritance (also called mixins or cloning) is the process of copying the properties from one object to another,
 // without retaining a reference between the two objects. It relies on JavaScript’s dynamic object extension feature.
 
-// added setter to keep the encapsulation
+// added setters to keep the encapsulation
 const Event_ = (time, place) => ({
   getTime() {
     return time;

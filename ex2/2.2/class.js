@@ -30,6 +30,9 @@ class DataType {
   getUnit() {
     return this.#unit;
   }
+  setUnit(unit) {
+    this.#unit = unit;
+  }
 }
 
 //** this is necessary because in JavaScript a class cannot extend from multiple classes */
@@ -165,6 +168,17 @@ class WeatherPrediction extends EventDataType {
   setMax(max) {
     this.#max = max;
   }
+  matches(data) {
+    if (data == undefined) return false;
+    return (
+      data.getTime() == this.getTime() &&
+      data.getPlace() == this.getPlace() &&
+      data.getType() == this.getType() &&
+      data.getUnit() == this.getUnit() &&
+      data.getValue() >= this.getMin() &&
+      data.getValue() <= this.getMax()
+    );
+  }
 }
 
 class TemperaturePrediction extends WeatherPrediction {
@@ -268,3 +282,18 @@ class CloudCoveragePrediction extends WeatherPrediction {
     super(time, place, type, unit, min, max);
   }
 }
+
+module.exports = {
+  Event_,
+  DataType,
+  WeatherData,
+  WeatherPrediction,
+  Temperature,
+  Wind,
+  Precipitation,
+  CloudCoverage,
+  TemperaturePrediction,
+  PrecipitationPrediction,
+  WindPrediction,
+  CloudCoveragePrediction,
+};
