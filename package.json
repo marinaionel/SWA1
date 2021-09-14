@@ -1,0 +1,22 @@
+{
+  "name": "homework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ex2\\2.1\\concatenative_inheritance.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marinaionel/SWA1_homework.git"
+  },
+  "author": "Marina Ionel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marinaionel/SWA1_homework/issues"
+  },
+  "homepage": "https://github.com/marinaionel/SWA1_homework#readme",
+  "dependencies": {
+    "jest": "^27.2.0"
+  }
+}
