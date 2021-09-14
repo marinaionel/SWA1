@@ -250,3 +250,18 @@ const WindPrediction = (
 
 const CloudCoveragePrediction = (time, place, type, unit, min, max) =>
   Object.assign({}, WeatherPrediction(time, place, type, unit, min, max));
+
+module.exports = {
+  Event_,
+  DataType,
+  WeatherData,
+  WeatherPrediction,
+  Temperature,
+  Wind,
+  Precipitation,
+  CloudCoverage,
+  TemperaturePrediction,
+  PrecipitationPrediction,
+  WindPrediction,
+  CloudCoveragePrediction,
+};
