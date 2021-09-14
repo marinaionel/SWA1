@@ -1,6 +1,13 @@
 const { test, expect } = require("@jest/globals");
-
 const c = require("./concatenative_inheritance");
+
+const PRECIPITATION = "precipitation";
+const WIND = "wind";
+const TEMPERATURE = "temperature";
+const CLOUD_COVERAGE = "cloud coverage";
+const RAIN = "rain";
+const SNOW = "snow";
+
 test("Event creation", () => {
   let e = c.Event_(Date(2021, 1, 1), "London");
   expect(e.getPlace()).toBe("London");
@@ -35,14 +42,7 @@ test("WeatherData creation", () => {
 });
 
 test("WeatherPrediction creation", () => {
-  let wp = c.WeatherPrediction(
-    Date(2020, 1, 1),
-    "Vejle",
-    "wind",
-    "MPH",
-    0,
-    100
-  );
+  let wp = c.WeatherPrediction(Date(2020, 1, 1), "Vejle", WIND, "MPH", 0, 100);
   expect(wp.getMax()).toBe(100);
   expect(wp.getMin()).toBe(0);
   expect(wp.getPlace()).toBe("Vejle");
@@ -50,43 +50,108 @@ test("WeatherPrediction creation", () => {
 });
 
 test("WeatherPrediction matches", () => {
-  let wp = c.WeatherPrediction(
-    Date(2020, 1, 1),
-    "Vejle",
-    "wind",
-    "MPH",
-    0,
-    100
-  );
+  let wp = c.WeatherPrediction(Date(2020, 1, 1), "Vejle", WIND, "MPH", 0, 100);
 
-  let wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 34);
+  let wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MPH", 34);
   expect(wp.matches(wd1)).toBe(true);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MPH", 101);
+  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MPH", 101);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "London", "wind", "MPH", 10);
+  wd1 = c.WeatherData(Date(2020, 1, 1), "London", WIND, "MPH", 10);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "precipitation", "MPH", 10);
+  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", PRECIPITATION, "MPH", 10);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", "wind", "MS", 34);
+  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MS", 34);
   expect(wp.matches(wd1)).toBe(false);
 });
 
-test("Temperature creation", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+test(TEMPERATURE + " creation", () => {
+  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
   expect(t.getPlace()).toBe("Vejle");
   expect(t.getTime()).toBe(Date(2020, 2, 5));
 });
 
-test("Temperature convertion 1", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+test(TEMPERATURE + " convertion 1", () => {
+  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
   t.convertToC();
   expect(t.getUnit()).toBe("C");
   expect(t.getValue()).toBe(23);
 });
 
-test("Temperature convertion 2", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", "temperature", "C", 23);
+test(TEMPERATURE + " convertion 2", () => {
+  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
   t.convertToF();
   expect(t.getUnit()).toBe("F");
   expect(t.getValue()).toBe(73.4);
+});
+
+test(PRECIPITATION + " creation", () => {
+  let p = c.Precipitation(
+    Date(2020, 3, 4),
+    "Stilling",
+    PRECIPITATION,
+    "MM",
+    55,
+    RAIN
+  );
+  expect(p.getPrecipitationType()).toBe(RAIN);
+  expect(p.getPlace()).toBe("Stilling");
+  expect(p.getTime()).toBe(Date(2020, 3, 4));
+  expect(p.getType()).toBe(PRECIPITATION);
+});
+
+test(PRECIPITATION + " conversion 1", () => {
+  let p = c.Precipitation(
+    Date(2020, 3, 4),
+    "Stilling",
+    PRECIPITATION,
+    "MM",
+    55,
+    RAIN
+  );
+  p.convertToMM();
+  expect(p.getUnit()).toBe("MM");
+  expect(p.getValue()).toBe(55);
+});
+
+test(PRECIPITATION + " conversion 2", () => {
+  let p = c.Precipitation(
+    Date(2020, 3, 4),
+    "Stilling",
+    PRECIPITATION,
+    "MM",
+    55,
+    RAIN
+  );
+  p.convertToInches();
+  expect(p.getUnit()).toBe("Inches");
+  expect(p.getValue()).toBeCloseTo(2.16535);
+});
+
+test(WIND + " creation", () => {
+  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  expect(w.getDirection()).toEqual("E");
+  expect(w.getPlace()).toEqual("Vejle");
+  expect(w.getType()).toEqual(WIND);
+  expect(w.getUnit()).toEqual("MPH");
+});
+
+test(WIND + " convertion 1", () => {
+  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  w.convertToMPH();
+  expect(w.getUnit()).toEqual("MPH");
+  expect(w.getValue()).toEqual(10);
+});
+
+test(WIND + " convertion 2", () => {
+  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  w.convertToMS();
+  expect(w.getUnit()).toEqual("MS");
+  expect(w.getValue()).toBeCloseTo(4.4704);
+});
+
+test(WIND + " convertion 3", () => {
+  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "jsfh", 10, "E");
+  w.convertToMS();
+  expect(w.getUnit()).toEqual("jsfh");
+  expect(w.getValue()).toBeCloseTo(10);
 });
