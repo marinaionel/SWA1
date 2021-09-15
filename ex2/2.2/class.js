@@ -2,6 +2,8 @@
 // setters added to keep encapsulation
 // note: it is impossible to access private fields of the base class and JS does not have "protected"
 
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+
 class Event_ {
   #time;
   #place;
@@ -83,15 +85,15 @@ class Temperature extends WeatherData {
     super(time, place, type, unit, value);
   }
   convertToF() {
-    if (this.getUnit() == "C") {
-      this.setUnit("F");
+    if (this.getUnit() == CELSIUS) {
+      this.setUnit(FAHRENHEIT);
       this.setValue(this.getValue() * 1.8 + 32);
     }
   }
   convertToC() {
-    if (this.getUnit() == "F") {
-      this.setUnit("C");
-      this.setValue(1.8 * (this.getValue() - 32));
+    if (this.getUnit() == FAHRENHEIT) {
+      this.setUnit(CELSIUS);
+      this.setValue((this.getValue() - 32) / 1.8);
     }
   }
 }
@@ -106,14 +108,14 @@ class Precipitation extends WeatherData {
     return this.#precipitationType;
   }
   convertToInches() {
-    if (this.getUnit() == "MM") {
-      this.setUnit("Inches");
+    if (this.getUnit() == MM) {
+      this.setUnit(INCHES);
       this.setValue(this.getValue() / 25.4);
     }
   }
   convertToMM() {
-    if (this.getUnit() == "Inches") {
-      this.setUnit("MM");
+    if (this.getUnit() == INCHES) {
+      this.setUnit(MM);
       this.setValue(this.getValue() * 25.4);
     }
   }
@@ -129,14 +131,14 @@ class Wind extends WeatherData {
     return this.#direction;
   }
   convertToMPH() {
-    if (this.getUnit() == "MS") {
-      this.setUnit("MPH");
+    if (this.getUnit() == MS) {
+      this.setUnit(MPH);
       this.setValue(this.getValue() * 2.237);
     }
   }
   convertToMS() {
-    if (this.getUnit() == "MPH") {
-      this.setUnit("MS");
+    if (this.getUnit() == MPH) {
+      this.setUnit(MS);
       this.setValue(this.getValue() / 2.237);
     }
   }
@@ -186,24 +188,24 @@ class TemperaturePrediction extends WeatherPrediction {
     super(time, place, type, unit, min, max);
   }
   convertToC() {
-    if (this.getUnit() == "F") {
-      this.setUnit("C");
-      this.setMax(1.8 * (this.getMax() - 32));
-      this.setMin(1.8 * (this.getMin() - 32));
+    if (this.getUnit() == FAHRENHEIT) {
+      this.setUnit(CELSIUS);
+      this.setMax(Math.round(((this.getMax() - 32) / 1.8) * 100) / 100);
+      this.setMin(Math.round(((this.getMin() - 32) / 1.8) * 100) / 100);
     }
   }
   convertToF() {
-    if (this.getUnit() == "C") {
-      this.setUnit("F");
-      this.setMax(this.getMax() * 1.8 + 32);
-      this.setMin(this.getMin() * 1.8 + 32);
+    if (this.getUnit() == CELSIUS) {
+      this.setUnit(FAHRENHEIT);
+      this.setMax(Math.round((this.getMax() * 1.8 + 32) * 100) / 100);
+      this.setMin(Math.round((this.getMin() * 1.8 + 32) * 100) / 100);
     }
   }
 }
 
 class PrecipitationPrediction extends WeatherPrediction {
   #expectedTypes;
-  constructor(time, place, type, unit, min, max, expectedTypes) {
+  constructor(time, place, type, unit, min, max, ...expectedTypes) {
     super(time, place, type, unit, min, max);
     this.#expectedTypes = expectedTypes;
   }
@@ -211,37 +213,30 @@ class PrecipitationPrediction extends WeatherPrediction {
     return this.#expectedTypes;
   }
   convertToInches() {
-    if (this.getUnit() == "MM") {
-      this.setUnit("Inches");
+    if (this.getUnit() == MM) {
+      this.setUnit(INCHES);
       this.setMin(this.getMin() / 25.4);
       this.setMax(this.getMax() / 25.4);
     }
   }
   convertToMM() {
-    if (this.getUnit() == "Inches") {
-      this.setUnit("MM");
+    if (this.getUnit() == INCHES) {
+      this.setUnit(MM);
       this.setMax(this.getMax() * 25.4);
       this.setMin(this.getMin() * 25.4);
     }
   }
   matches(data) {
-    if (data == undefined) return false;
-    if (data.getUnit() == "MM") this.convertToMM();
-    else if (data.getUnit() == "Inches") this.convertToInches();
     return (
-      data.getTime() == this.getTime() &&
-      data.getPlace() == this.getPlace() &&
-      data.getType() == this.getType() &&
-      data.getUnit() == this.getUnit() &&
-      data.getValue() >= this.getMin() &&
-      data.getValue() <= this.getMax()
+      super.matches(data) &&
+      this.getExpectedTypes().includes(data.getPrecipitationType())
     );
   }
 }
 
 class WindPrediction extends WeatherPrediction {
   #expectedDirections;
-  constructor(time, place, type, unit, min, max, expectedDirections) {
+  constructor(time, place, type, unit, min, max, ...expectedDirections) {
     super(time, place, type, unit, min, max);
     this.#expectedDirections = expectedDirections;
   }
@@ -249,30 +244,23 @@ class WindPrediction extends WeatherPrediction {
     return this.#expectedDirections;
   }
   convertToMPH() {
-    if (this.getUnit() == "MS") {
-      this.setUnit("MPH");
+    if (this.getUnit() == MS) {
+      this.setUnit(MPH);
       this.setMin(this.getMin() * 2.237);
       this.setMax(this.getMax() * 2.237);
     }
   }
   convertToMS() {
-    if (this.getUnit() == "MPH") {
-      this.setUnit("MS");
+    if (this.getUnit() == MPH) {
+      this.setUnit(MS);
       this.setMin(this.getMin() / 2.237);
       this.setMax(this.getMax() / 2.237);
     }
   }
   matches(data) {
-    if (data == undefined) return false;
-    if (data.getUnit() == "MS") this.convertToMS();
-    else if (data.getUnit() == "MPH") this.convertToMPH();
     return (
-      data.getTime() == this.getTime() &&
-      data.getPlace() == this.getPlace() &&
-      data.getType() == this.getType() &&
-      data.getUnit() == this.getUnit() &&
-      data.getValue() >= this.getMin() &&
-      data.getValue() <= this.getMax()
+      super.matches(data) &&
+      this.getExpectedDirections().includes(data.getDirection())
     );
   }
 }

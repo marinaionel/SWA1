@@ -2,6 +2,10 @@
 // without retaining a reference between the two objects. It relies on JavaScript’s dynamic object extension feature.
 
 // added setters to keep the encapsulation
+
+// prettier-ignore
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+
 const Event_ = (time, place) => ({
   getTime() {
     return time;
@@ -73,16 +77,27 @@ const Temperature = (time, place, type, unit, value) =>
   Object.assign(
     {
       convertToF() {
-        if (this.getUnit() == "C") {
-          this.setUnit("F");
+        if (this.getUnit() == CELSIUS) {
+          this.setUnit(FAHRENHEIT);
           this.setValue(this.getValue() * 1.8 + 32);
         }
       },
       convertToC() {
-        if (this.getUnit() == "F") {
-          this.setUnit("C");
-          this.setValue(1.8 * (this.getValue() - 32));
+        if (this.getUnit() == FAHRENHEIT) {
+          this.setUnit(CELSIUS);
+          this.setValue((this.getValue() - 32) / 1.8);
         }
+      },
+      matches(data) {
+        if (data == undefined) return false;
+        return (
+          data.getTime() == this.getTime() &&
+          data.getPlace() == this.getPlace() &&
+          data.getType() == this.getType() &&
+          data.getUnit() == this.getUnit() &&
+          data.getValue() >= this.getMin() &&
+          data.getValue() <= this.getMax()
+        );
       },
     },
     WeatherData(time, place, type, unit, value)
@@ -95,14 +110,14 @@ const Precipitation = (time, place, type, unit, value, precipitationType) => {
         return precipitationType;
       },
       convertToInches() {
-        if (this.getUnit() == "MM") {
-          this.setUnit("Inches");
+        if (this.getUnit() == MM) {
+          this.setUnit(INCHES);
           this.setValue(this.getValue() / 25.4);
         }
       },
       convertToMM() {
-        if (this.getUnit() == "Inches") {
-          this.setUnit("MM");
+        if (this.getUnit() == INCHES) {
+          this.setUnit(MM);
           this.setValue(this.getValue() * 25.4);
         }
       },
@@ -118,14 +133,14 @@ const Wind = (time, place, type, unit, value, direction) => {
         return direction;
       },
       convertToMPH() {
-        if (this.getUnit() == "MS") {
-          this.setUnit("MPH");
+        if (this.getUnit() == MS) {
+          this.setUnit(MPH);
           this.setValue(this.getValue() * 2.237);
         }
       },
       convertToMS() {
-        if (this.getUnit() == "MPH") {
-          this.setUnit("MS");
+        if (this.getUnit() == MPH) {
+          this.setUnit(MS);
           this.setValue(this.getValue() / 2.237);
         }
       },
@@ -141,17 +156,18 @@ const TemperaturePrediction = (time, place, type, unit, min, max) =>
   Object.assign(
     {
       convertToC() {
-        if (this.getUnit() == "F") {
-          this.setUnit("C");
-          this.setMax(1.8 * (this.getMax() - 32));
-          this.setMin(1.8 * (this.getMin() - 32));
+        if (this.getUnit() == FAHRENHEIT) {
+          this.setUnit(CELSIUS);
+          // round to 2 decimal places
+          this.setMax(Math.round(((this.getMax() - 32) / 1.8) * 100) / 100);
+          this.setMin(Math.round(((this.getMin() - 32) / 1.8) * 100) / 100);
         }
       },
       convertToF() {
-        if (this.getUnit() == "C") {
-          this.setUnit("F");
-          this.setMax(this.getMax() * 1.8 + 32);
-          this.setMin(this.getMin() * 1.8 + 32);
+        if (this.getUnit() == CELSIUS) {
+          this.setUnit(FAHRENHEIT);
+          this.setMax(Math.round((this.getMax() * 1.8 + 32) * 100) / 100);
+          this.setMin(Math.round((this.getMin() * 1.8 + 32) * 100) / 100);
         }
       },
     },
@@ -165,7 +181,7 @@ const PrecipitationPrediction = (
   unit,
   min,
   max,
-  expectedTypes
+  ...expectedTypes
 ) =>
   Object.assign(
     {
@@ -173,34 +189,36 @@ const PrecipitationPrediction = (
         return expectedTypes;
       },
       convertToInches() {
-        if (this.getUnit() == "MM") {
-          this.setUnit("Inches");
+        if (this.getUnit() == MM) {
+          this.setUnit(INCHES);
           this.setMin(this.getMin() / 25.4);
           this.setMax(this.getMax() / 25.4);
         }
       },
       convertToMM() {
-        if (this.getUnit() == "Inches") {
-          this.setUnit("MM");
+        if (this.getUnit() == INCHES) {
+          this.setUnit(MM);
           this.setMax(this.getMax() * 25.4);
           this.setMin(this.getMin() * 25.4);
         }
       },
+    },
+    WeatherPrediction(time, place, type, unit, min, max),
+    // 'matches' in a separate object sice the parent has 'matches' so it overrides it
+    {
       matches(data) {
         if (data == undefined) return false;
-        if (data.getUnit() == "MM") this.convertToMM();
-        else if (data.getUnit() == "Inches") this.convertToInches();
         return (
           data.getTime() == this.getTime() &&
           data.getPlace() == this.getPlace() &&
           data.getType() == this.getType() &&
           data.getUnit() == this.getUnit() &&
           data.getValue() >= this.getMin() &&
-          data.getValue() <= this.getMax()
+          data.getValue() <= this.getMax() &&
+          this.getExpectedTypes().includes(data.getPrecipitationType())
         );
       },
-    },
-    WeatherPrediction(time, place, type, unit, min, max)
+    }
   );
 
 const WindPrediction = (
@@ -210,7 +228,7 @@ const WindPrediction = (
   unit,
   min,
   max,
-  expectedDirections
+  ...expectedDirections
 ) =>
   Object.assign(
     {
@@ -218,34 +236,35 @@ const WindPrediction = (
         return expectedDirections;
       },
       convertToMPH() {
-        if (this.getUnit() == "MS") {
-          this.setUnit("MPH");
+        if (this.getUnit() == MS) {
+          this.setUnit(MPH);
           this.setMin(this.getMin() * 2.237);
           this.setMax(this.getMax() * 2.237);
         }
       },
       convertToMS() {
-        if (this.getUnit() == "MPH") {
-          this.setUnit("MS");
+        if (this.getUnit() == MPH) {
+          this.setUnit(MS);
           this.setMin(this.getMin() / 2.237);
           this.setMax(this.getMax() / 2.237);
         }
       },
+    },
+    WeatherPrediction(time, place, type, unit, min, max),
+    {
       matches(data) {
         if (data == undefined) return false;
-        if (data.getUnit() == "MS") this.convertToMS();
-        else if (data.getUnit() == "MPH") this.convertToMPH();
         return (
           data.getTime() == this.getTime() &&
           data.getPlace() == this.getPlace() &&
           data.getType() == this.getType() &&
           data.getUnit() == this.getUnit() &&
           data.getValue() >= this.getMin() &&
-          data.getValue() <= this.getMax()
+          data.getValue() <= this.getMax() &&
+          this.getExpectedDirections().includes(data.getDirection())
         );
       },
-    },
-    WeatherPrediction(time, place, type, unit, min, max)
+    }
   );
 
 const CloudCoveragePrediction = (time, place, type, unit, min, max) =>

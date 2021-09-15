@@ -1,157 +1,276 @@
 const { test, expect } = require("@jest/globals");
-const c = require("./concatenative_inheritance");
-
-const PRECIPITATION = "precipitation";
-const WIND = "wind";
-const TEMPERATURE = "temperature";
-const CLOUD_COVERAGE = "cloud coverage";
-const RAIN = "rain";
-const SNOW = "snow";
+// prettier-ignore
+const { PRECIPITATION, WIND, TEMPERATURE, CLOUD_COVERAGE, RAIN, SNOW, EAST, WEST, NORTH, SOUTH, OKTA, MPH, MS, MM, INCHES, CELSIUS, FAHRENHEIT, LONDON, VEJLE, STILLING, ODENSE, HORSENS } = require("../constants");
+// prettier-ignore
+const { Event_, DataType, WeatherData, WeatherPrediction, Temperature, Wind, Precipitation, CloudCoverage, TemperaturePrediction, PrecipitationPrediction, WindPrediction, CloudCoveragePrediction } = require("./concatenative_inheritance");
 
 test("Event creation", () => {
-  let e = c.Event_(Date(2021, 1, 1), "London");
-  expect(e.getPlace()).toBe("London");
+  let e = Event_(Date(2021, 1, 1), LONDON);
+  expect(e.getPlace()).toBe(LONDON);
   expect(e.getTime()).toBe(Date(2021, 1, 1));
 });
 
 test("DataType creation", () => {
-  let d = c.DataType("precipitations", "MM");
-  expect(d.getType()).toBe("precipitations");
-  expect(d.getUnit()).toBe("MM");
-  d.setUnit("F");
-  expect(d.getUnit()).toBe("F");
+  let d = DataType(PRECIPITATION, MM);
+  expect(d.getType()).toBe(PRECIPITATION);
+  expect(d.getUnit()).toBe(MM);
+  d.setUnit(FAHRENHEIT);
+  expect(d.getUnit()).toBe(FAHRENHEIT);
 });
 
 test("WeatherData creation", () => {
-  let wd = c.WeatherData(
-    Date(2020, 3, 3),
-    "Horsens",
-    "precipitations",
-    "MM",
-    67
-  );
-  expect(wd.getPlace()).toBe("Horsens");
+  let wd = WeatherData(Date(2020, 3, 3), HORSENS, PRECIPITATION, MM, 67);
+  expect(wd.getPlace()).toBe(HORSENS);
   expect(wd.getTime()).toBe(Date(2020, 3, 3));
-  expect(wd.getType()).toBe("precipitations");
-  expect(wd.getUnit()).toBe("MM");
+  expect(wd.getType()).toBe(PRECIPITATION);
+  expect(wd.getUnit()).toBe(MM);
   expect(wd.getValue()).toBe(67);
-  wd.setUnit("Inches");
-  expect(wd.getUnit()).toBe("Inches");
+  wd.setUnit(INCHES);
+  expect(wd.getUnit()).toBe(INCHES);
   wd.setValue(33);
   expect(wd.getValue()).toBe(33);
 });
 
 test("WeatherPrediction creation", () => {
-  let wp = c.WeatherPrediction(Date(2020, 1, 1), "Vejle", WIND, "MPH", 0, 100);
+  let wp = WeatherPrediction(Date(2020, 1, 1), VEJLE, WIND, MPH, 0, 100);
   expect(wp.getMax()).toBe(100);
   expect(wp.getMin()).toBe(0);
-  expect(wp.getPlace()).toBe("Vejle");
+  expect(wp.getPlace()).toBe(VEJLE);
   expect(wp.getTime()).toBe(Date(2020, 1, 1));
 });
 
 test("WeatherPrediction matches", () => {
-  let wp = c.WeatherPrediction(Date(2020, 1, 1), "Vejle", WIND, "MPH", 0, 100);
+  let wp = WeatherPrediction(Date(2020, 1, 1), VEJLE, WIND, MPH, 0, 100);
 
-  let wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MPH", 34);
+  let wd1 = WeatherData(Date(2020, 1, 1), VEJLE, WIND, MPH, 34);
   expect(wp.matches(wd1)).toBe(true);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MPH", 101);
+  wd1 = WeatherData(Date(2020, 1, 1), VEJLE, WIND, MPH, 101);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "London", WIND, "MPH", 10);
+  wd1 = WeatherData(Date(2020, 1, 1), LONDON, WIND, MPH, 10);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", PRECIPITATION, "MPH", 10);
+  wd1 = WeatherData(Date(2020, 1, 1), VEJLE, PRECIPITATION, MPH, 10);
   expect(wp.matches(wd1)).toBe(false);
-  wd1 = c.WeatherData(Date(2020, 1, 1), "Vejle", WIND, "MS", 34);
+  wd1 = WeatherData(Date(2020, 1, 1), VEJLE, WIND, MS, 34);
   expect(wp.matches(wd1)).toBe(false);
 });
 
 test(TEMPERATURE + " creation", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
-  expect(t.getPlace()).toBe("Vejle");
+  let t = Temperature(Date(2020, 2, 5), VEJLE, TEMPERATURE, CELSIUS, 23);
+  expect(t.getPlace()).toBe(VEJLE);
   expect(t.getTime()).toBe(Date(2020, 2, 5));
 });
 
 test(TEMPERATURE + " convertion 1", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
+  let t = Temperature(Date(2020, 2, 5), VEJLE, TEMPERATURE, CELSIUS, 23);
   t.convertToC();
-  expect(t.getUnit()).toBe("C");
+  expect(t.getUnit()).toBe(CELSIUS);
   expect(t.getValue()).toBe(23);
 });
 
 test(TEMPERATURE + " convertion 2", () => {
-  let t = c.Temperature(Date(2020, 2, 5), "Vejle", TEMPERATURE, "C", 23);
+  let t = Temperature(Date(2020, 2, 5), VEJLE, TEMPERATURE, CELSIUS, 23);
   t.convertToF();
   expect(t.getUnit()).toBe("F");
   expect(t.getValue()).toBe(73.4);
 });
 
 test(PRECIPITATION + " creation", () => {
-  let p = c.Precipitation(
+  let p = Precipitation(
     Date(2020, 3, 4),
-    "Stilling",
+    STILLING,
     PRECIPITATION,
-    "MM",
+    MM,
     55,
     RAIN
   );
   expect(p.getPrecipitationType()).toBe(RAIN);
-  expect(p.getPlace()).toBe("Stilling");
+  expect(p.getPlace()).toBe(STILLING);
   expect(p.getTime()).toBe(Date(2020, 3, 4));
   expect(p.getType()).toBe(PRECIPITATION);
 });
 
 test(PRECIPITATION + " conversion 1", () => {
-  let p = c.Precipitation(
+  let p = Precipitation(
     Date(2020, 3, 4),
-    "Stilling",
+    STILLING,
     PRECIPITATION,
-    "MM",
+    MM,
     55,
     RAIN
   );
   p.convertToMM();
-  expect(p.getUnit()).toBe("MM");
+  expect(p.getUnit()).toBe(MM);
   expect(p.getValue()).toBe(55);
 });
 
 test(PRECIPITATION + " conversion 2", () => {
-  let p = c.Precipitation(
+  let p = Precipitation(
     Date(2020, 3, 4),
-    "Stilling",
+    STILLING,
     PRECIPITATION,
-    "MM",
+    MM,
     55,
     RAIN
   );
   p.convertToInches();
-  expect(p.getUnit()).toBe("Inches");
+  expect(p.getUnit()).toBe(INCHES);
   expect(p.getValue()).toBeCloseTo(2.16535);
 });
 
 test(WIND + " creation", () => {
-  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  let w = Wind(Date(2020, 3, 3), VEJLE, WIND, MPH, 10, EAST);
   expect(w.getDirection()).toEqual("E");
-  expect(w.getPlace()).toEqual("Vejle");
+  expect(w.getPlace()).toEqual(VEJLE);
   expect(w.getType()).toEqual(WIND);
-  expect(w.getUnit()).toEqual("MPH");
+  expect(w.getUnit()).toEqual(MPH);
 });
 
 test(WIND + " convertion 1", () => {
-  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  let w = Wind(Date(2020, 3, 3), VEJLE, WIND, MPH, 10, EAST);
   w.convertToMPH();
-  expect(w.getUnit()).toEqual("MPH");
+  expect(w.getUnit()).toEqual(MPH);
   expect(w.getValue()).toEqual(10);
 });
 
 test(WIND + " convertion 2", () => {
-  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "MPH", 10, "E");
+  let w = Wind(Date(2020, 3, 3), VEJLE, WIND, MPH, 10, EAST);
   w.convertToMS();
-  expect(w.getUnit()).toEqual("MS");
+  expect(w.getUnit()).toEqual(MS);
   expect(w.getValue()).toBeCloseTo(4.4704);
 });
 
 test(WIND + " convertion 3", () => {
-  let w = c.Wind(Date(2020, 3, 3), "Vejle", WIND, "jsfh", 10, "E");
+  let w = Wind(Date(2020, 3, 3), VEJLE, WIND, "jsfh", 10, EAST);
   w.convertToMS();
   expect(w.getUnit()).toEqual("jsfh");
-  expect(w.getValue()).toBeCloseTo(10);
+  expect(w.getValue()).toEqual(10);
+});
+
+test(CLOUD_COVERAGE, () => {
+  let cc = CloudCoverage(Date(2020, 2, 3), ODENSE, CLOUD_COVERAGE, OKTA);
+  expect(cc.getUnit()).toEqual(OKTA);
+});
+
+test("TemperaturePrediction test", () => {
+  let tp = TemperaturePrediction(
+    Date(2020, 2, 3),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    20,
+    23
+  );
+  tp.convertToC();
+  expect(tp.getUnit()).toEqual(CELSIUS);
+  expect(tp.getMax()).toEqual(23);
+  expect(tp.getMin()).toEqual(20);
+
+  tp.convertToF();
+  expect(tp.getUnit()).toEqual(FAHRENHEIT);
+  expect(tp.getMax()).toEqual(73.4);
+  expect(tp.getMin()).toEqual(68);
+
+  tp.convertToC();
+  expect(tp.getUnit()).toEqual(CELSIUS);
+  expect(tp.getMax()).toEqual(23);
+  expect(tp.getMin()).toEqual(20);
+
+  let data = Temperature(
+    Date(2020, 2, 3),
+    LONDON,
+    TEMPERATURE,
+    FAHRENHEIT,
+    70.6
+  );
+  expect(tp.matches(data)).toEqual(false);
+  data.convertToC();
+  expect(tp.matches(data)).toEqual(true);
+});
+
+test("PrecipitationPrediction test", () => {
+  let pp = PrecipitationPrediction(
+    Date(2020, 5, 4),
+    VEJLE,
+    PRECIPITATION,
+    MM,
+    10,
+    13,
+    RAIN
+  );
+
+  pp.convertToMM();
+  expect(pp.getUnit()).toEqual(MM);
+  expect(pp.getMax()).toEqual(13);
+  expect(pp.getMin()).toEqual(10);
+
+  pp.convertToInches();
+  expect(pp.getUnit()).toEqual(INCHES);
+  expect(pp.getMax()).toBeCloseTo(0.511811);
+  expect(pp.getMin()).toBeCloseTo(0.393701);
+
+  let data = Precipitation(
+    Date(2020, 5, 4),
+    VEJLE,
+    PRECIPITATION,
+    INCHES,
+    0.4387,
+    RAIN
+  );
+  expect(pp.matches(data)).toEqual(true);
+  data.convertToMM();
+  expect(pp.matches(data)).toEqual(false);
+  expect(data.getUnit()).toEqual(MM);
+
+  data = Precipitation(
+    Date(2020, 5, 4),
+    VEJLE,
+    PRECIPITATION,
+    INCHES,
+    0.4387,
+    SNOW
+  );
+  expect(pp.matches(data)).toEqual(false);
+});
+
+test("WindPrediction test", () => {
+  let wp = WindPrediction(
+    Date(2020, 3, 3),
+    LONDON,
+    WIND,
+    MS,
+    10,
+    13,
+    EAST,
+    SOUTH
+  );
+  wp.convertToMPH();
+  expect(wp.getUnit()).toEqual(MPH);
+  expect(wp.getMax()).toBeCloseTo(29.0802);
+  expect(wp.getMin()).toBeCloseTo(22.3694);
+
+  wp.convertToMS();
+  expect(wp.getUnit()).toEqual(MS);
+  expect(wp.getMax()).toBeCloseTo(13);
+  expect(wp.getMin()).toBeCloseTo(10);
+
+  let data = Wind(Date(2020, 5, 4), LONDON, WIND, MS, 11.231, SOUTH);
+  expect(wp.matches(data)).toEqual(true);
+
+  data = Wind(Date(2020, 5, 4), LONDON, WIND, MS, 11.231, NORTH);
+  expect(wp.matches(data)).toEqual(false);
+});
+
+test("CloudCoveragePrediction test", () => {
+  let cp = CloudCoveragePrediction(
+    Date(2020, 8, 10),
+    VEJLE,
+    CLOUD_COVERAGE,
+    OKTA,
+    3,
+    4
+  );
+  let data = CloudCoverage(Date(2020, 8, 10), VEJLE, CLOUD_COVERAGE, OKTA, 3);
+  expect(cp.matches(data)).toBe(true);
+  data.setValue(5);
+  expect(cp.matches(data)).toBe(false);
 });
