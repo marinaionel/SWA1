@@ -281,6 +281,7 @@ const average = (list) =>
   list.reduce((prev, curr) => prev + curr) / list.length;
 const checker = (arr, target) => target.every((v) => arr.includes(v));
 const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
 const WeatherCollection = (...data) => ({
   forPlace(place) {
