@@ -1,5 +1,5 @@
 // prettier-ignore
-const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT, TEMPERATURE, WIND, PRECIPITATION } = require("../constants");
 
 const Event_ = (time, place) => ({
   getTime() {
@@ -265,6 +265,108 @@ const WindPrediction = (
 const CloudCoveragePrediction = (time, place, type, unit, min, max) =>
   Object.assign({}, WeatherPrediction(time, place, type, unit, min, max));
 
+const DateInterval = (from, to) => ({
+  getFrom() {
+    return from;
+  },
+  getTo() {
+    return to;
+  },
+  contains(d) {
+    return d >= from && d <= to;
+  },
+});
+
+const average = (list) =>
+  list.reduce((prev, curr) => prev + curr) / list.length;
+const checker = (arr, target) => target.every((v) => arr.includes(v));
+const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+// this object is to remove redundancies in WeatherHistory and WeatherForecast
+const WeatherCollection = (...data) => ({
+  forPlace(place) {
+    return data.filter(function (item) {
+      return item.getPlace() == place;
+    });
+  },
+  forType(type) {
+    return data.filter(function (item) {
+      return item.getType() == type;
+    });
+  },
+  forPeriod(period) {
+    return data.filter(function (item) {
+      return period.contains(item.getTime());
+    });
+  },
+  including(...data) {
+    return checker(this.#data, data);
+  },
+  getData() {
+    return data;
+  },
+  convertToUsUnits() {
+    data.forEach((d) => {
+      switch (d.getType()) {
+        case TEMPERATURE:
+          d.convertToF();
+          break;
+        case WIND:
+          d.convertToMPH();
+          break;
+        case PRECIPITATION:
+          d.convertToInches();
+          break;
+      }
+    });
+  },
+  convertToInternationalUnits() {
+    data.forEach((d) => {
+      switch (d.getType()) {
+        case TEMPERATURE:
+          d.convertToC();
+          break;
+        case WIND:
+          d.convertToMS();
+          break;
+        case PRECIPITATION:
+          d.convertToMM();
+          break;
+      }
+    });
+  },
+});
+
+// get predictions seems to be the same as get data, so instead of a redundant call as below
+//  getPredictions() {
+//    return this.getData();
+//  },
+// the method will not be included
+const WeatherForecast = (...data) =>
+  Object.assign(
+    {
+      getAverageMinValue() {
+        average(data.map((d) => d.getMin()));
+      },
+      getAverageMaxValue() {
+        average(data.map((d) => d.getMax()));
+      },
+    },
+    WeatherCollection()
+  );
+
+const WeatherHistory = (...data) =>
+  Object.assign(
+    {
+      lowestValue() {
+        if (data == undefined || data.length == 0) return undefined;
+        if (data.map((d) => d.getType()).filter(onlyUnique).length > 1)
+          return undefined;
+        return Math.min(data.map((d) => d.getValue()));
+      },
+    },
+    WeatherCollection()
+  );
+
 module.exports = {
   Event_,
   DataType,
@@ -278,4 +380,7 @@ module.exports = {
   PrecipitationPrediction,
   WindPrediction,
   CloudCoveragePrediction,
+  DateInterval,
+  WeatherForecast,
+  WeatherHistory,
 };
