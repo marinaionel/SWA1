@@ -274,3 +274,12 @@ test("CloudCoveragePrediction test", () => {
   data.setValue(5);
   expect(cp.matches(data)).toBe(false);
 });
+
+test("WeatherHistory lowestValue test", () => {
+  let t1 = Temperature(Date(2020, 9, 9), LONDON, TEMPERATURE, CELSIUS, 19.3);
+  let t2 = Temperature(Date(2020, 9, 4), LONDON, TEMPERATURE, CELSIUS, 20.3);
+  let t3 = Temperature(Date(2020, 9, 1), LONDON, TEMPERATURE, CELSIUS, 15.3);
+
+  let wh = WeatherHistory(t1, t2, t3);
+  expect(wh.lowestValue()).toBe(15.3);
+});

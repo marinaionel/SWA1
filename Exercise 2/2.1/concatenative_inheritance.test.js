@@ -57,7 +57,7 @@ test("WeatherPrediction matches", () => {
 test(TEMPERATURE + " creation", () => {
   let t = Temperature(Date(2020, 2, 5), VEJLE, TEMPERATURE, CELSIUS, 23);
   expect(t.getPlace()).toBe(VEJLE);
-  expect(t.getTime()).toBe(Date(2020, 2, 5));
+  expect(t.getTime()).toEqual(Date(2020, 2, 5));
 });
 
 test(TEMPERATURE + " convertion 1", () => {

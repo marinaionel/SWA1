@@ -375,10 +375,15 @@ class WeatherHistory extends WeatherCollection {
     super(data);
   }
   lowestValue() {
-    if (data == undefined || data.length == 0) return undefined;
-    if (data.map((d) => d.getType()).filter(onlyUnique).length > 1)
+    if (this.getData() == undefined || this.getData().length == 0)
       return undefined;
-    return Math.min(data.map((d) => d.getValue()));
+    if (
+      this.getData()
+        .map((d) => d.getType())
+        .filter(onlyUnique).length > 1
+    )
+      return undefined;
+    return Math.min(this.getData().map((d) => d.getValue()));
   }
 }
 
@@ -398,4 +403,5 @@ module.exports = {
   DateInterval,
   WeatherForecast,
   WeatherHistory,
+  WeatherCollection,
 };

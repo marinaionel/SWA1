@@ -2,7 +2,7 @@ const { test, expect } = require("@jest/globals");
 // prettier-ignore
 const { PRECIPITATION, WIND, TEMPERATURE, CLOUD_COVERAGE, RAIN, SNOW, EAST, WEST, NORTH, SOUTH, OKTA, MPH, MS, MM, INCHES, CELSIUS, FAHRENHEIT, LONDON, VEJLE, STILLING, ODENSE, HORSENS } = require("../constants");
 // prettier-ignore
-const { Event_, DataType, WeatherData, WeatherPrediction, Temperature, Wind, Precipitation, CloudCoverage, TemperaturePrediction, PrecipitationPrediction, WindPrediction, CloudCoveragePrediction, } = require("./class");
+const { Event_, DataType, WeatherData, WeatherPrediction, Temperature, Wind, Precipitation, CloudCoverage, TemperaturePrediction, PrecipitationPrediction, WindPrediction, CloudCoveragePrediction, WeatherForecast, WeatherCollection, WeatherHistory } = require("./1.2");
 
 test("Event creation", () => {
   let e = new Event_(Date(2021, 1, 1), LONDON);
@@ -279,4 +279,31 @@ test("CloudCoveragePrediction test", () => {
   expect(cp.matches(data)).toBe(true);
   data.setValue(5);
   expect(cp.matches(data)).toBe(false);
+});
+
+test("WeatherHistory lowestValue test", () => {
+  let t1 = new Temperature(
+    Date(2020, 9, 9),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    19.3
+  );
+  let t2 = new Temperature(
+    Date(2020, 9, 4),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    20.3
+  );
+  let t3 = new Temperature(
+    Date(2020, 9, 1),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    15.3
+  );
+
+  let wh = new WeatherHistory(t1, t2, t3);
+  expect(wh.lowestValue()).toBe(15.3);
 });
