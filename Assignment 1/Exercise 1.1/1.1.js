@@ -279,8 +279,6 @@ const DateInterval = (from, to) => ({
 
 const average = (list) =>
   list.reduce((prev, curr) => prev + curr) / list.length;
-const checker = (arr, target) => target.every((v) => arr.includes(v));
-const onlyUnique = (value, index, self) => self.indexOf(value) === index;
 
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
 const WeatherCollection = (data) => ({
@@ -300,6 +298,7 @@ const WeatherCollection = (data) => ({
     });
   },
   including(data) {
+    const checker = (arr, target) => target.every((v) => arr.includes(v));
     return checker(this.getData(), data);
   },
   getData() {
@@ -364,7 +363,8 @@ const WeatherHistory = (data) =>
         if (
           this.getData()
             .map((d) => d.getType())
-            .filter(onlyUnique).length > 1
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .length > 1
         )
           return undefined;
         let min = Math.min(

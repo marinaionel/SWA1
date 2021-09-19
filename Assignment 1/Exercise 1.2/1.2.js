@@ -289,11 +289,6 @@ class DateInterval {
   }
 }
 
-const average = (list) =>
-  list.reduce((prev, curr) => prev + curr) / list.length;
-const checker = (arr, target) => target.every((v) => arr.includes(v));
-const onlyUnique = (value, index, self) => self.indexOf(value) === index;
-
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
 class WeatherCollection {
   #data;
@@ -316,6 +311,7 @@ class WeatherCollection {
     });
   }
   including(data) {
+    const checker = (arr, target) => target.every((v) => arr.includes(v));
     return checker(this.#data, data);
   }
   getData() {
@@ -362,11 +358,15 @@ class WeatherForecast extends WeatherCollection {
   constructor(data) {
     super(data);
   }
+  // private method
+  #average(list) {
+    return list.reduce((prev, curr) => prev + curr) / list.length;
+  }
   getAverageMinValue() {
-    return average(this.getData().map((d) => d.getMin()));
+    return this.#average(this.getData().map((d) => d.getMin()));
   }
   getAverageMaxValue() {
-    return average(this.getData().map((d) => d.getMax()));
+    return this.#average(this.getData().map((d) => d.getMax()));
   }
 }
 
@@ -380,7 +380,8 @@ class WeatherHistory extends WeatherCollection {
     if (
       this.getData()
         .map((d) => d.getType())
-        .filter(onlyUnique).length > 1
+        .filter((value, index, self) => self.indexOf(value) === index).length >
+      1
     )
       return undefined;
     let min = Math.min(
