@@ -7,7 +7,7 @@ const { Event_, DataType, WeatherData, WeatherPrediction, Temperature, Wind, Pre
 test("Event creation", () => {
   let e = new Event_(Date(2021, 1, 1, 0, 0, 0, 0), LONDON);
   expect(e.getPlace()).toBe(LONDON);
-  expect(e.getTime()).toBe(Date(2021, 1, 1, 0, 0, 0, 0));
+  expect(e.getTime()).toEqual(Date(2021, 1, 1, 0, 0, 0, 0));
 });
 
 test("DataType creation", () => {
