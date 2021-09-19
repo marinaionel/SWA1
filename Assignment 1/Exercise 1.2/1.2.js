@@ -297,7 +297,7 @@ const onlyUnique = (value, index, self) => self.indexOf(value) === index;
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
 class WeatherCollection {
   #data;
-  constructor(...data) {
+  constructor(data) {
     this.#data = data;
   }
   forPlace(place) {
@@ -315,7 +315,7 @@ class WeatherCollection {
       return period.contains(item.getTime());
     });
   }
-  including(...data) {
+  including(data) {
     return checker(this.#data, data);
   }
   getData() {
@@ -359,19 +359,19 @@ class WeatherCollection {
 //  },
 // the method will not be included
 class WeatherForecast extends WeatherCollection {
-  constructor(...data) {
+  constructor(data) {
     super(data);
   }
   getAverageMinValue() {
-    average(this.getData().map((d) => d.getMin()));
+    return average(this.getData().map((d) => d.getMin()));
   }
   getAverageMaxValue() {
-    average(this.getData().map((d) => d.getMax()));
+    return average(this.getData().map((d) => d.getMax()));
   }
 }
 
 class WeatherHistory extends WeatherCollection {
-  constructor(...data) {
+  constructor(data) {
     super(data);
   }
   lowestValue() {
@@ -383,7 +383,12 @@ class WeatherHistory extends WeatherCollection {
         .filter(onlyUnique).length > 1
     )
       return undefined;
-    return Math.min(this.getData().map((d) => d.getValue()));
+    let min = Math.min(
+      ...this.getData()
+        .map((d) => d.getValue())
+        .map(Number)
+    );
+    return min == NaN ? undefined : min;
   }
 }
 

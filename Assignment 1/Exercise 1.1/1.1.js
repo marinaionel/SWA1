@@ -283,7 +283,7 @@ const checker = (arr, target) => target.every((v) => arr.includes(v));
 const onlyUnique = (value, index, self) => self.indexOf(value) === index;
 
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
-const WeatherCollection = (...data) => ({
+const WeatherCollection = (data) => ({
   forPlace(place) {
     return data.filter(function (item) {
       return item.getPlace() == place;
@@ -299,7 +299,7 @@ const WeatherCollection = (...data) => ({
       return period.contains(item.getTime());
     });
   },
-  including(...data) {
+  including(data) {
     return checker(this.getData(), data);
   },
   getData() {
@@ -342,20 +342,20 @@ const WeatherCollection = (...data) => ({
 //    return this.getData();
 //  },
 // the method will not be included
-const WeatherForecast = (...data) =>
+const WeatherForecast = (data) =>
   Object.assign(
     {
       getAverageMinValue() {
-        average(data.map((d) => d.getMin()));
+        return average(this.getData().map((d) => d.getMin()));
       },
       getAverageMaxValue() {
-        average(data.map((d) => d.getMax()));
+        return average(this.getData().map((d) => d.getMax()));
       },
     },
-    WeatherCollection()
+    WeatherCollection(data)
   );
 
-const WeatherHistory = (...data) =>
+const WeatherHistory = (data) =>
   Object.assign(
     {
       lowestValue() {
@@ -367,10 +367,15 @@ const WeatherHistory = (...data) =>
             .filter(onlyUnique).length > 1
         )
           return undefined;
-        return Math.min(this.getData().map((d) => d.getValue()));
+        let min = Math.min(
+          ...this.getData()
+            .map((d) => d.getValue())
+            .map(Number)
+        );
+        return min == NaN ? undefined : min;
       },
     },
-    WeatherCollection()
+    WeatherCollection(data)
   );
 
 module.exports = {

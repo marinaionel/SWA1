@@ -280,6 +280,75 @@ test("WeatherHistory lowestValue test", () => {
   let t2 = Temperature(Date(2020, 9, 4), LONDON, TEMPERATURE, CELSIUS, 20.3);
   let t3 = Temperature(Date(2020, 9, 1), LONDON, TEMPERATURE, CELSIUS, 15.3);
 
-  let wh = WeatherHistory(t1, t2, t3);
-  //   expect(wh.lowestValue()).toBe(15.3);
+  wh = WeatherHistory([t1, t2, t3]);
+  expect(wh.lowestValue()).toBe(15.3);
+});
+
+test("WeatherHistory lowestValue different types", () => {
+  let t1 = Temperature(Date(2020, 9, 9), LONDON, TEMPERATURE, CELSIUS, 19.3);
+  let t2 = Temperature(Date(2020, 9, 4), LONDON, TEMPERATURE, CELSIUS, 20.3);
+  let t3 = Wind(Date(2020, 9, 1), LONDON, WIND, MS, 15.3);
+
+  wh = WeatherHistory([t1, t2, t3]);
+  expect(wh.lowestValue()).toBe(undefined);
+});
+
+test("WeatherForecast averageMinValue test", () => {
+  let t1 = TemperaturePrediction(
+    Date(2020, 9, 9),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    19,
+    21
+  );
+  let t2 = TemperaturePrediction(
+    Date(2020, 9, 4),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    20,
+    21
+  );
+  let t3 = TemperaturePrediction(
+    Date(2020, 9, 1),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    17,
+    19
+  );
+
+  let wh = WeatherForecast([t1, t2, t3]);
+  expect(wh.getAverageMinValue()).toBe((19 + 20 + 17) / 3);
+});
+
+test("WeatherForecast averageMaxValue test", () => {
+  let t1 = TemperaturePrediction(
+    Date(2020, 9, 9),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    19,
+    21
+  );
+  let t2 = TemperaturePrediction(
+    Date(2020, 9, 4),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    20,
+    21
+  );
+  let t3 = TemperaturePrediction(
+    Date(2020, 9, 1),
+    LONDON,
+    TEMPERATURE,
+    CELSIUS,
+    17,
+    19
+  );
+
+  let wh = WeatherForecast([t1, t2, t3]);
+  expect(wh.getAverageMaxValue()).toBe((21 + 21 + 19) / 3);
 });
