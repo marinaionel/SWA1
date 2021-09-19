@@ -358,7 +358,7 @@ class WeatherForecast extends WeatherCollection {
   constructor(data) {
     super(data);
   }
-  // private method
+  // private method, works on node 14.x, 16.x
   #average(list) {
     return list.reduce((prev, curr) => prev + curr) / list.length;
   }
