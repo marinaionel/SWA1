@@ -216,10 +216,10 @@ test("PrecipitationPrediction test", () => {
     0.4387,
     RAIN
   );
-  expect(pp.matches(data)).toEqual(true);
+  expect(pp.matches(data)).toBe(true);
   data.convertToMM();
-  expect(pp.matches(data)).toEqual(false);
-  expect(data.getUnit()).toEqual(MM);
+  expect(pp.matches(data)).toBe(false);
+  expect(data.getUnit()).toBe(MM);
 
   data = new Precipitation(
     Date(2020, 5, 4),

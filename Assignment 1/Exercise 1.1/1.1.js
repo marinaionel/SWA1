@@ -277,9 +277,6 @@ const DateInterval = (from, to) => ({
   },
 });
 
-const average = (list) =>
-  list.reduce((prev, curr) => prev + curr) / list.length;
-
 // this object is to remove redundancies in WeatherHistory and WeatherForecast
 const WeatherCollection = (data) => ({
   forPlace(place) {
@@ -341,8 +338,10 @@ const WeatherCollection = (data) => ({
 //    return this.getData();
 //  },
 // the method will not be included
-const WeatherForecast = (data) =>
-  Object.assign(
+const WeatherForecast = (data) => {
+  const average = (list) =>
+    list.reduce((prev, curr) => prev + curr) / list.length;
+  return Object.assign(
     {
       getAverageMinValue() {
         return average(this.getData().map((d) => d.getMin()));
@@ -353,6 +352,7 @@ const WeatherForecast = (data) =>
     },
     WeatherCollection(data)
   );
+};
 
 const WeatherHistory = (data) =>
   Object.assign(
