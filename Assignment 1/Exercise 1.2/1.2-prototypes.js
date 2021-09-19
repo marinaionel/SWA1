@@ -209,7 +209,6 @@ PrecipitationPrediction.prototype.convertToMM = function () {
   }
 };
 PrecipitationPrediction.prototype.matches = function (data) {
-  console.log(WeatherPrediction.prototype);
   return (
     WeatherPrediction.prototype.matches.call(this, data) &&
     this.getExpectedTypes().includes(data.getPrecipitationType())

@@ -5,9 +5,9 @@ const { PRECIPITATION, WIND, TEMPERATURE, CLOUD_COVERAGE, RAIN, SNOW, EAST, WEST
 const { Event_, DataType, WeatherData, WeatherPrediction, Temperature, Wind, Precipitation, CloudCoverage, TemperaturePrediction, PrecipitationPrediction, WindPrediction, CloudCoveragePrediction, WeatherForecast, WeatherCollection, WeatherHistory } = require("./1.2");
 
 test("Event creation", () => {
-  let e = new Event_(Date(2021, 1, 1, 0, 0, 0), LONDON);
+  let e = new Event_(Date(2021, 1, 1, 0, 0, 0, 0), LONDON);
   expect(e.getPlace()).toBe(LONDON);
-  expect(e.getTime()).toBe(Date(2021, 1, 1, 0, 0, 0));
+  expect(e.getTime()).toBe(Date(2021, 1, 1, 0, 0, 0, 0));
 });
 
 test("DataType creation", () => {
