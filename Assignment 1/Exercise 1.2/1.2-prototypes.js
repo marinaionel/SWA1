@@ -1,4 +1,4 @@
-const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../../constants");
 
 function Event_(time, place) {
   this.time = time;

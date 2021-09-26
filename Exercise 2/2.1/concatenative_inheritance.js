@@ -4,7 +4,7 @@
 // added setters to keep the encapsulation
 
 // prettier-ignore
-const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../../constants");
 
 const Event_ = (time, place) => ({
   getTime() {

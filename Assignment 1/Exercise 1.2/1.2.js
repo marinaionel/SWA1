@@ -2,7 +2,7 @@
 // setters added to keep encapsulation
 // note: it is impossible to access private fields of the base class and JS does not have "protected"
 
-const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../constants");
+const { INCHES, MS, MPH, MM, CELSIUS, FAHRENHEIT } = require("../../constants");
 
 class Event_ {
   #time;
