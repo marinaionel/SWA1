@@ -340,7 +340,7 @@ test("WeatherHistory lowestValue test", () => {
     15.3
   );
 
-  wh = WeatherHistory([t1, t2, t3]);
+  let wh = WeatherHistory([t1, t2, t3]);
   expect(wh.lowestValue()).toBe(15.3);
 });
 
@@ -361,7 +361,7 @@ test("WeatherHistory lowestValue different types", () => {
   );
   let t3 = Wind(Date(2020, 9, 1), LONDON, WIND, MS, 15.3);
 
-  wh = WeatherHistory([t1, t2, t3]);
+  let wh = WeatherHistory([t1, t2, t3]);
   expect(wh.lowestValue()).toBe(undefined);
 });
 
