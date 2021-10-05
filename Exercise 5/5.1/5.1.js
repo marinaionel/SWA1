@@ -18,6 +18,5 @@ function getUsingFetch() {
     .then((data) => setValue("#data", JSON.stringify(data)));
 }
 
-function setValue(selector, value) {
-  document.querySelector(selector).innerHTML = value;
-}
+const setValue = (selector, value) =>
+  (document.querySelector(selector).innerHTML = value);
