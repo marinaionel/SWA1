@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="5.3.css" />
+  </head>
+  <body>
+    <div>
+      <div>
+        <button class="pinkButton" onclick="getPersons()">Get persons</button>
+      </div>
+      <div><textarea readonly id="persons" class="container"></textarea></div>
+    </div>
+    <div>
+      <div>
+        <label for="personId">Person ID</label>
+        <input
+          type="text"
+          id="personId"
+          name="personId"
+          placeholder="Person ID.."
+        />
+      </div>
+      <div>
+        <button
+          class="purpleButton"
+          onclick="getPerson(document.getElementById('personId').value)"
+        >
+          Get person
+        </button>
+      </div>
+    </div>
+    <textarea readonly id="person" class="container"></textarea>
+    <label for="existingPersonId">Person ID</label>
+    <input
+      type="text"
+      id="existingPersonId"
+      name="existingPersonId"
+      placeholder="Person ID.."
+    />
+    <label for="personName">Person Name</label>
+    <input
+      type="text"
+      id="personName"
+      name="personName"
+      placeholder="Person Name.."
+    />
+    <label for="employeeId">Employee ID</label>
+    <input
+      type="text"
+      id="employeeId"
+      name="employeeId"
+      placeholder="Employee ID.."
+    />
+    <button
+      class="purpleButton"
+      onclick="patchPerson(document.getElementById('existingPersonId').value, document.getElementById('personName').value, document.getElementById('employeeId').value)"
+    >
+      Patch Person
+    </button>
+    <div id="result"></div>
+    <button class="pinkButton" onclick="getEmployees()">Get Employees</button>
+    <textarea readonly id="employees" class="container"></textarea>
+    <script src="5.3.js"></script>
+  </body>
+</html>
