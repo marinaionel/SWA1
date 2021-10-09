@@ -1,9 +1,66 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Exercise 2.2</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
     <link rel="stylesheet" href="2.2.b.css" />
   </head>
   <body>
     <script src="2.2.b.js"></script>
+    <h1 class="title">Exercise 2.2</h1>
+    <h2 class="subtitle is-3">
+      All data for the latest measurement of each kind
+    </h2>
+    <div id="a"></div>
+    <script>
+      allDataForTheLatestMeasurementOfEachKind("Horsens");
+      allDataForTheLatestMeasurementOfEachKind("Aarhus");
+      allDataForTheLatestMeasurementOfEachKind("Copenhagen");
+    </script>
+
+    <h2 class="subtitle is-3">Minimum temperature for the last 5 days</h2>
+    <div id="b"></div>
+    <script>
+      minimumTemperatureForTheLast5Days("Horsens");
+      minimumTemperatureForTheLast5Days("Aarhus");
+      minimumTemperatureForTheLast5Days("Copenhagen");
+    </script>
+
+    <h2 class="subtitle is-3">Maximum temperature for the last 5 days</h2>
+    <div id="c"></div>
+    <script>
+      maximumTemperatureForTheLast5Days("Horsens");
+      maximumTemperatureForTheLast5Days("Aarhus");
+      maximumTemperatureForTheLast5Days("Copenhagen");
+    </script>
+
+    <h2 class="subtitle is-3">Total precipitations for the last 5 days</h2>
+    <div id="d"></div>
+    <script>
+      totalPrecipitationForTheLast5Days("Horsens");
+      totalPrecipitationForTheLast5Days("Aarhus");
+      totalPrecipitationForTheLast5Days("Copenhagen");
+    </script>
+
+    <h2 class="subtitle is-3">Average wind speed for the last 5 days</h2>
+    <div id="e"></div>
+    <script>
+      averageWindSpeedForTheLast5Days("Horsens");
+      averageWindSpeedForTheLast5Days("Aarhus");
+      averageWindSpeedForTheLast5Days("Copenhagen");
+    </script>
+
+    <h2 class="subtitle is-3">Hourly predictions for the next 24 hours</h2>
+    <div id="f"></div>
+    <script>
+      hourlyPredictionsForTheNext24Hours("Horsens");
+      hourlyPredictionsForTheNext24Hours("Aarhus");
+      hourlyPredictionsForTheNext24Hours("Copenhagen");
+    </script>
   </body>
 </html>
