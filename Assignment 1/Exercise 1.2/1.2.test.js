@@ -49,7 +49,7 @@ test("WeatherPrediction creation", () => {
   expect(wp.getMax()).toBe(100);
   expect(wp.getMin()).toBe(0);
   expect(wp.getPlace()).toBe(VEJLE);
-  expect(wp.getTime()).toBe(Date(2020, 1, 1, 0, 0, 0));
+  expect(wp.getTime()).toEqual(Date(2020, 1, 1, 0, 0, 0));
 });
 
 test("WeatherPrediction matches", () => {
