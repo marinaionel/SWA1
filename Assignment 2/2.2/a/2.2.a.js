@@ -16,7 +16,7 @@ const allDataForTheLatestMeasurementOfEachKind = (place) => {
   let req = new XMLHttpRequest();
   req.addEventListener(LOAD, function () {
     let data = JSON.parse(this.responseText)
-      .slice(-5)
+      .slice(-4)
       .map((data) => `${data.type}: ${data.value} ${data.unit}`)
       .join("<br>");
     addValue(
@@ -64,7 +64,7 @@ const maximumTemperatureForTheLast5Days = (place) => {
           let thisDate = Date.parse(d.time);
           return fiveDaysAgo <= thisDate && thisDate <= now;
         })
-        .filter((data) => data.type == "temperature")
+        .filter((data) => data.type == TEMPERATURE)
         .map((data) => data.value)
         .map(Number)
     );
