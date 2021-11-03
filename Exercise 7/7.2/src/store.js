@@ -4,6 +4,11 @@ export default (init_model, view, renderer) => {
 
   function reducer(action, model) {
     switch (action.type) {
+      case "update":
+        return model
+          .setMeasurementsData(action.measurements)
+          .setPredictionsData(action.predictions);
+
       case "choose_city":
         return model
           .setCity(action.city)

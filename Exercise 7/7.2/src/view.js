@@ -319,6 +319,14 @@ export default (dispatcher) => (model) => {
         <p className="mt-1 text-lg text-gray-500">
           {model.totalPrecipitationForTheLast5Days().toFixed(2)} mm
         </p>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() =>
+            dispatcher()({ type: "update", city: model.getCity() })
+          }
+        >
+          Update data
+        </button>
         <section id="selectCity">
           <div className="w-full flex-none text-sm font-medium text-gray-500 mt-2">
             Select a city

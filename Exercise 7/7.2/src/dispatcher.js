@@ -3,6 +3,22 @@ const axios = require("axios").default;
 
 export default (store) => async (action) => {
   switch (action.type) {
+    case "update":
+      let measurements = await axios
+        .get(`http://localhost:8080/data/${action.city}`)
+        .then((res) => res.data)
+        .catch((error) => console.log(error));
+      let predictions = await axios
+        .get(`http://localhost:8080/forecast/${action.city}`)
+        .then((res) => res.data)
+        .catch((error) => console.log(error));
+      store({
+        type: action.type,
+        measurements: measurements,
+        predictions: predictions,
+      });
+      break;
+
     case "choose_city":
       let newMeasurements = await axios
         .get(`http://localhost:8080/data/${action.city}`)

@@ -1,3 +1,5 @@
+import * as moment from "moment";
+
 const PRECIPITATION = "precipitation";
 const TEMPERATURE = "temperature";
 const WIND_SPEED = "wind speed";
@@ -82,11 +84,15 @@ const model = (city, measurementsData, predictionsData, fromTime, toTime) => {
   };
 
   const hourlyPredictions = () => {
+    console.log("pd", predictionsData);
     return predictionsData.filter((d) => {
       let thisDate = new Date(Date.parse(d.time));
       return (
-        fromTime.getHours() <= thisDate.getHours() &&
-        thisDate.getHours() <= toTime.getHours()
+        moment(fromTime)
+          .set("minute", 0)
+          .set("second", 0)
+          .set("millisecond", 0)
+          .toDate() <= thisDate && thisDate <= toTime
       );
     });
   };
