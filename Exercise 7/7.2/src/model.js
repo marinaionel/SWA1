@@ -2,14 +2,23 @@ const PRECIPITATION = "precipitation";
 const TEMPERATURE = "temperature";
 const WIND_SPEED = "wind speed";
 
-const model = (city, measurementsData, predictionsData) => {
-  const getCity = () => city;
-  const setCity = (_city) => model(_city, measurementsData, predictionsData);
+const model = (city, measurementsData, predictionsData, fromTime, toTime) => {
+  const setFromTime = (_fromTime) =>
+    model(city, [...measurementsData], [...predictionsData], _fromTime, toTime);
+  const setToTime = (_toTime) =>
+    model(city, [...measurementsData], [...predictionsData], fromTime, _toTime);
+  const setCity = (_city) =>
+    model(_city, [...measurementsData], [...predictionsData], fromTime, toTime);
   const setMeasurementsData = (_measurementsData) =>
-    model(city, _measurementsData, predictionsData);
+    model(city, _measurementsData, [...predictionsData], fromTime, toTime);
   const setPredictionsData = (_predictionsData) =>
-    model(city, measurementsData, _predictionsData);
+    model(city, [...measurementsData], _predictionsData, fromTime, toTime);
+
   const getLatestMeasurements = () => measurementsData.slice(-4);
+  const getFromTime = () => fromTime;
+  const getToTime = () => toTime;
+  const getCity = () => city;
+
   const minimumTemperatureForTheLast5Days = () => {
     const now = new Date();
     const fiveDaysAgo = new Date(now);
@@ -25,6 +34,7 @@ const model = (city, measurementsData, predictionsData) => {
         .map(Number)
     );
   };
+
   const maximumTemperatureForTheLast5Days = () => {
     const now = new Date();
     const fiveDaysAgo = new Date(now);
@@ -40,6 +50,7 @@ const model = (city, measurementsData, predictionsData) => {
         .map(Number)
     );
   };
+
   const totalPrecipitationForTheLast5Days = () => {
     const now = new Date();
     const fiveDaysAgo = new Date(now);
@@ -54,6 +65,7 @@ const model = (city, measurementsData, predictionsData) => {
       .map(Number)
       .reduce((sum, current) => sum + current);
   };
+
   const averageWindSpeedForTheLast5Days = () => {
     const now = new Date();
     const fiveDaysAgo = new Date(now);
@@ -68,16 +80,22 @@ const model = (city, measurementsData, predictionsData) => {
       .map(Number)
       .reduce((a, v, i) => (a * i + v) / (i + 1));
   };
-  const hourlyPredictionsForTheNext24Hours = () => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const hourlyPredictions = () => {
     return predictionsData.filter((d) => {
-      let thisDate = Date.parse(d.time);
-      return today <= thisDate && thisDate <= tomorrow;
+      let thisDate = new Date(Date.parse(d.time));
+      return (
+        fromTime.getHours() <= thisDate.getHours() &&
+        thisDate.getHours() <= toTime.getHours()
+      );
     });
   };
+
   return {
+    setFromTime,
+    getFromTime,
+    getToTime,
+    setToTime,
     getCity,
     setCity,
     setMeasurementsData,
@@ -87,7 +105,8 @@ const model = (city, measurementsData, predictionsData) => {
     maximumTemperatureForTheLast5Days,
     totalPrecipitationForTheLast5Days,
     averageWindSpeedForTheLast5Days,
-    hourlyPredictionsForTheNext24Hours,
+    hourlyPredictions,
   };
 };
+
 export default model;

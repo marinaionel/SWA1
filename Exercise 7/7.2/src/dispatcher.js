@@ -4,7 +4,6 @@ const axios = require("axios").default;
 export default (store) => async (action) => {
   switch (action.type) {
     case "choose_city":
-      console.log(action.city);
       let newMeasurements = await axios
         .get(`http://localhost:8080/data/${action.city}`)
         .then((res) => res.data)
@@ -18,6 +17,20 @@ export default (store) => async (action) => {
         city: action.city,
         measurements: newMeasurements,
         predictions: newPredictions,
+      });
+      break;
+
+    case "set_from_prediction":
+      store({
+        type: action.type,
+        from: action.from,
+      });
+      break;
+
+    case "set_to_prediction":
+      store({
+        type: action.type,
+        to: action.to,
       });
       break;
 

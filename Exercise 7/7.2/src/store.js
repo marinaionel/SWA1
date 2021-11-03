@@ -10,6 +10,12 @@ export default (init_model, view, renderer) => {
           .setMeasurementsData(action.measurements)
           .setPredictionsData(action.predictions);
 
+      case "set_from_prediction":
+        return model.setFromTime(action.from);
+
+      case "set_to_prediction":
+        return model.setToTime(action.to);
+
       default:
         return model;
     }

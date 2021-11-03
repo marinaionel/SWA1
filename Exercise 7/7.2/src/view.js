@@ -1,4 +1,6 @@
 import Select from "react-select";
+import DatePicker from "react-datepicker";
+import * as moment from "moment";
 
 /* eslint-disable import/no-anonymous-default-export */
 const MeasurementData = ({ measurement }) => {
@@ -32,7 +34,6 @@ const MeasurementDataBody = ({ model }) => {
 };
 
 const WeatherCard = ({ model }) => {
-  console.log(model);
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col bg-white rounded p-4 w-full max-w-xs">
@@ -263,7 +264,6 @@ const TemperatureIcon = () => (
 );
 
 const ForecastCard = ({ hour, type, min, max, unit }) => {
-  console.log("type", type);
   return (
     <div className="inline-block px-3 ">
       <div className="bg-blue-700 w-40 h-60 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -280,7 +280,7 @@ const ForecastCard = ({ hour, type, min, max, unit }) => {
           {hour}:00
         </div>
         <p className="text-base text-center text-white">
-          {min}-{max} {unit}
+          {min} to {max} {unit}
         </p>
       </div>
     </div>
@@ -334,12 +334,56 @@ export default (dispatcher) => (model) => {
       <WeatherCard model={model} />
 
       <div className="flex flex-col bg-white m-auto p-auto">
-        <p className="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
-          Weather Forecast for the next 24 hours
-        </p>
+        <div>
+          <p className="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
+            Weather Forecast for the next 24 hours
+          </p>
+          <div>
+            <p className="inline">From</p>
+            <DatePicker
+              placeholderText="from..."
+              className="inline"
+              selected={model.getFromTime()}
+              onChange={(date) =>
+                dispatcher()({
+                  from: date,
+                  type: "set_from_prediction",
+                })
+              }
+              timeFormat="HH:mm"
+              dateFormat="dd/MM/yyyy HH:mm"
+              showTimeSelect
+              timeIntervals={60}
+              minDate={moment().toDate()}
+              maxDate={moment().add(1, "d").toDate()}
+              // minTime={moment().toDate()}
+              // maxTime={moment().add(1, "d").toDate()}
+            />
+            <p className="inline">to</p>
+            <DatePicker
+              placeholderText="to..."
+              className="inline"
+              selected={model.getToTime()}
+              onChange={(date) => {
+                dispatcher()({
+                  to: date,
+                  type: "set_to_prediction",
+                });
+              }}
+              timeFormat="HH:mm"
+              dateFormat="dd/MM/yyyy HH:mm"
+              showTimeSelect
+              timeIntervals={60}
+              minDate={model.getFromTime()}
+              maxDate={moment().add(1, "d").toDate()}
+              // minTime={model.getFromTime()}
+              // maxTime={moment().add(1, "d").toDate()}
+            />
+          </div>
+        </div>
         <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
           <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-            {model.hourlyPredictionsForTheNext24Hours().map((element) => (
+            {model.hourlyPredictions().map((element) => (
               <ForecastCard
                 hour={new Date(element.time).getHours()}
                 type={element.type}
