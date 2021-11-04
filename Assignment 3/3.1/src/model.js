@@ -53,17 +53,23 @@ const model = (
       [...historicalInterval]
     );
 
-  const getLatestMeasurements = () => historicalData.slice(-4);
+  const getLatestMeasurements = () => getHistoricalData().slice(-4);
   const getForecastInterval = () => [...forecastInterval];
   const getHistoricalInterval = () => [...historicalInterval];
   const getCity = () => city;
+  const getCities = () =>
+    historicalData
+      .map((data) => data.place)
+      .filter((value, index, self) => self.indexOf(value) === index);
+  const getHistoricalData = () =>
+    historicalData.filter((data) => data.place === getCity());
 
   const minimumTemperatureForTheLast5Days = () => {
     const now = new Date();
     const fiveDaysAgo = new Date(now);
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
     return Math.min(
-      ...historicalData
+      ...getHistoricalData()
         .filter((d) => {
           let thisDate = Date.parse(d.time);
           return fiveDaysAgo <= thisDate && thisDate <= now;
@@ -79,7 +85,7 @@ const model = (
     const fiveDaysAgo = new Date(now);
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
     return Math.max(
-      ...historicalData
+      ...getHistoricalData()
         .filter((d) => {
           let thisDate = Date.parse(d.time);
           return fiveDaysAgo <= thisDate && thisDate <= now;
@@ -94,7 +100,7 @@ const model = (
     const now = new Date();
     const fiveDaysAgo = new Date(now);
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-    return historicalData
+    return getHistoricalData()
       .filter((d) => {
         let thisDate = Date.parse(d.time);
         return fiveDaysAgo <= thisDate && thisDate <= now;
@@ -109,7 +115,7 @@ const model = (
     const now = new Date();
     const fiveDaysAgo = new Date(now);
     fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-    return historicalData
+    return getHistoricalData()
       .filter((d) => {
         let thisDate = Date.parse(d.time);
         return fiveDaysAgo <= thisDate && thisDate <= now;
@@ -122,24 +128,28 @@ const model = (
 
   const forecast = () => {
     let [from, to] = forecastInterval;
-    return forecastData.filter((d) => {
-      let thisDate = new Date(Date.parse(d.time));
-      return (
-        moment(from)
-          .set("minute", 0)
-          .set("second", 0)
-          .set("millisecond", 0)
-          .toDate() <= thisDate && thisDate <= to
-      );
-    });
+    return forecastData
+      .filter((d) => d.place === getCity())
+      .filter((d) => {
+        let thisDate = new Date(Date.parse(d.time));
+        return (
+          moment(from)
+            .set("minute", 0)
+            .set("second", 0)
+            .set("millisecond", 0)
+            .toDate() <= thisDate && thisDate <= to
+        );
+      });
   };
 
   const historical = () => {
     let [from, to] = historicalInterval;
+
     return {};
   };
 
   return {
+    getCities,
     setHistoricalInterval,
     getHistoricalInterval,
     setForecastInterval,

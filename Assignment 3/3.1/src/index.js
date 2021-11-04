@@ -10,12 +10,12 @@ const axios = require("axios").default;
 async function init() {
   try {
     const city = "Horsens";
-    let measurements = await axios
-      .get(`http://localhost:8080/data/${city}`)
+    let historical = await axios
+      .get(`http://localhost:8080/data`)
       .then((res) => res.data)
       .catch((error) => console.log(error));
-    let predictions = await axios
-      .get(`http://localhost:8080/forecast/${city}`)
+    let forecast = await axios
+      .get(`http://localhost:8080/forecast`)
       .then((res) => res.data)
       .catch((error) => console.log(error));
     const today = new Date();
@@ -23,7 +23,7 @@ async function init() {
     to.setHours(today.getHours() + 12);
     today.setMinutes(0);
     to.setMinutes(0);
-    const theModel = model(city, measurements, predictions, today, to);
+    const theModel = model(city, historical, forecast, [today, to], []);
     let renderer = (dom) =>
       ReactDOM.render(dom, document.getElementById("root"));
     let theDispatcher;

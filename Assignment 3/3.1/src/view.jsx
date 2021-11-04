@@ -287,12 +287,122 @@ const ForecastCard = ({ hour, type, min, max, unit }) => {
   );
 };
 
+const TextFormField = ({ name, label, placeholder }) => {
+  return (
+    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+      <label
+        className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+        for={name}
+      >
+        {label}
+      </label>
+      <input
+        className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+        name={name}
+        type="text"
+        placeholder={placeholder}
+      />
+    </div>
+  );
+};
+
+const ReportHistoricalDataForm = ({ dispatcher }) => {
+  return (
+    <form
+      className="w-full max-w-lg"
+      onSubmit={(event) => {
+        event.preventDefault();
+        dispatcher()({
+          type: "report_historical_data",
+          measurement: {
+            city: event.target.city.value,
+            type: event.target.type.value,
+            value: event.target.value.value,
+            unit: event.target.unit.value,
+            date: event.target.date.value,
+            extra: event.target.extra.value,
+          },
+        });
+      }}
+    >
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <TextFormField label={"City"} name={"city"} placeholder={"Aarhus"} />
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="type"
+          >
+            Type
+          </label>
+          <div className="relative">
+            <select
+              className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              name="type"
+            >
+              <option>Cloud Coverage</option>
+              <option>Temperature</option>
+              <option>Wind Speed</option>
+              <option>Precipitation</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <TextFormField label={"Value"} name={"value"} placeholder={""} />
+        <TextFormField label={"Unit"} name={"unit"} placeholder={"C"} />
+      </div>
+
+      <div className="flex flex-wrap -mx-3 mb-6">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="type"
+          >
+            Date
+          </label>
+          <DatePicker
+            placeholderText={"date"}
+            showTimeSelect
+            timeIntervals={60}
+            name="date"
+          />
+        </div>
+        <TextFormField
+          label={"Wind Direction / Precipitation Type"}
+          name={"extra"}
+          placeholder={""}
+        />
+      </div>
+
+      <div className="md:flex md:items-center">
+        <div className="md:w-1/3"></div>
+        <div className="md:w-2/3">
+          <button
+            className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+            type="button"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </form>
+  );
+};
+
 export default (dispatcher) => (model) => {
-  const options = [
-    { value: "Horsens", label: "Horsens" },
-    { value: "Aarhus", label: "Aarhus" },
-    { value: "Copenhagen", label: "Copenhagen" },
-  ];
+  const options = model
+    .getCities()
+    .map((item) => ({ value: item, label: item }));
   const handleChange = (selectedOption) =>
     dispatcher()({ type: "choose_city", city: selectedOption.value });
   return (
@@ -320,7 +430,7 @@ export default (dispatcher) => (model) => {
           {model.totalPrecipitationForTheLast5Days().toFixed(2)} mm
         </p>
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() =>
             dispatcher()({ type: "update", city: model.getCity() })
           }
@@ -351,11 +461,11 @@ export default (dispatcher) => (model) => {
             <DatePicker
               placeholderText="from..."
               className="inline"
-              selected={model.getFromTime()}
+              selected={model.getForecastInterval()[0]}
               onChange={(date) =>
                 dispatcher()({
                   from: date,
-                  type: "set_from_prediction",
+                  type: "set_from_forecast",
                 })
               }
               timeFormat="HH:mm"
@@ -371,18 +481,18 @@ export default (dispatcher) => (model) => {
             <DatePicker
               placeholderText="to..."
               className="inline"
-              selected={model.getToTime()}
+              selected={model.getForecastInterval()[1]}
               onChange={(date) => {
                 dispatcher()({
                   to: date,
-                  type: "set_to_prediction",
+                  type: "set_to_forecast",
                 });
               }}
               timeFormat="HH:mm"
               dateFormat="dd/MM/yyyy HH:mm"
               showTimeSelect
               timeIntervals={60}
-              minDate={model.getFromTime()}
+              minDate={model.getForecastInterval()[0]}
               maxDate={moment().add(1, "d").toDate()}
               // minTime={model.getFromTime()}
               // maxTime={moment().add(1, "d").toDate()}
@@ -391,7 +501,7 @@ export default (dispatcher) => (model) => {
         </div>
         <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
           <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-            {model.hourlyPredictions().map((element) => (
+            {model.forecast().map((element) => (
               <ForecastCard
                 hour={new Date(element.time).getHours()}
                 type={element.type}
@@ -403,6 +513,11 @@ export default (dispatcher) => (model) => {
           </div>
         </div>
       </div>
+
+      <p class="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
+        Report historical weather data
+      </p>
+      <ReportHistoricalDataForm dispatcher={dispatcher} />
 
       <section className="container mx-auto p-6 font-mono">
         <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
