@@ -37,6 +37,7 @@ export default (store) => async (action) => {
       break;
 
     case "set_from_prediction":
+    case "set_from_historical":
       store({
         type: action.type,
         from: action.from,
@@ -44,6 +45,7 @@ export default (store) => async (action) => {
       break;
 
     case "set_to_prediction":
+    case "set_to_historical":
       store({
         type: action.type,
         to: action.to,
