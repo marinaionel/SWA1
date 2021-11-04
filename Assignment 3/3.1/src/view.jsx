@@ -3,8 +3,8 @@ import DatePicker from "react-datepicker";
 import * as moment from "moment";
 import ReportHistoricalDataForm from "./components/ReportHistoricalDataForm";
 import ForecastCard from "./components/ForecastCard";
-import MeasurementDataBody from "./components/MeasurementDataBody";
 import WeatherCard from "./components/WeatherCard";
+import MeasurementsTable from "./components/MeasurementsTable";
 
 /* eslint-disable import/no-anonymous-default-export */
 export default (dispatcher) => (model) => {
@@ -62,49 +62,127 @@ export default (dispatcher) => (model) => {
       <div className="flex flex-col bg-white m-auto p-auto">
         <div>
           <p className="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
-            Weather Forecast for the next 24 hours
+            Weather Forecast
           </p>
-          <div>
-            <p className="inline">From</p>
-            <DatePicker
-              placeholderText="from..."
-              className="inline"
-              selected={model.getForecastInterval()[0]}
-              onChange={(date) =>
-                dispatcher()({
-                  from: date,
-                  type: "set_from_forecast",
-                })
-              }
-              timeFormat="HH:mm"
-              dateFormat="dd/MM/yyyy HH:mm"
-              showTimeSelect
-              timeIntervals={60}
-              minDate={moment().toDate()}
-              maxDate={moment().add(1, "d").toDate()}
-              // minTime={moment().toDate()}
-              // maxTime={moment().add(1, "d").toDate()}
-            />
-            <p className="inline">to</p>
-            <DatePicker
-              placeholderText="to..."
-              className="inline"
-              selected={model.getForecastInterval()[1]}
-              onChange={(date) => {
-                dispatcher()({
-                  to: date,
-                  type: "set_to_forecast",
-                });
-              }}
-              timeFormat="HH:mm"
-              dateFormat="dd/MM/yyyy HH:mm"
-              showTimeSelect
-              timeIntervals={60}
-              minDate={model.getForecastInterval()[0]}
-              maxDate={moment().add(1, "d").toDate()}
-              // minTime={model.getFromTime()}
-              // maxTime={moment().add(1, "d").toDate()}
-            />
+          <div className="w-full max-w-lg flex flex-wrap -mx-3 mb-6">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                From
+              </label>
+              <DatePicker
+                placeholderText="from..."
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                selected={model.getForecastInterval()[0]}
+                onChange={(date) =>
+                  dispatcher()({
+                    from: date,
+                    type: "set_from_forecast",
+                  })
+                }
+                timeFormat="HH:mm"
+                dateFormat="dd/MM/yyyy HH:mm"
+                showTimeSelect
+                timeIntervals={60}
+                minDate={moment().toDate()}
+                maxDate={moment().add(1, "d").toDate()}
+                // minTime={moment().toDate()}
+                // maxTime={moment().add(1, "d").toDate()}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                To
+              </label>
+              <DatePicker
+                placeholderText="to..."
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                selected={model.getForecastInterval()[1]}
+                onChange={(date) => {
+                  dispatcher()({
+                    to: date,
+                    type: "set_to_forecast",
+                  });
+                }}
+                timeFormat="HH:mm"
+                dateFormat="dd/MM/yyyy HH:mm"
+                showTimeSelect
+                timeIntervals={60}
+                minDate={model.getForecastInterval()[0]}
+                maxDate={moment().add(1, "d").toDate()}
+                // minTime={model.getFromTime()}
+                // maxTime={moment().add(1, "d").toDate()}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
+          <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
+            {model.forecast().map((element) => (
+              <ForecastCard
+                hour={new Date(element.time).getHours()}
+                type={element.type}
+                min={element.from}
+                max={element.to}
+                unit={element.unit}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col bg-white m-auto p-auto">
+        <div>
+          <p className="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
+            Weather Historical Values
+          </p>
+          <div className="w-full max-w-lg flex flex-wrap -mx-3 mb-6">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                From
+              </label>
+              <DatePicker
+                placeholderText="from..."
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                selected={model.getHistoricalInterval()[0]}
+                onChange={(date) =>
+                  dispatcher()({
+                    from: date,
+                    type: "set_from_historical",
+                  })
+                }
+                timeFormat="HH:mm"
+                dateFormat="dd/MM/yyyy HH:mm"
+                showTimeSelect
+                timeIntervals={60}
+                maxDate={moment().toDate()}
+                // minTime={moment().toDate()}
+                // maxTime={moment().add(1, "d").toDate()}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                To
+              </label>
+              <DatePicker
+                placeholderText="to..."
+                className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                selected={model.getHistoricalInterval()[1]}
+                onChange={(date) => {
+                  dispatcher()({
+                    to: date,
+                    type: "set_to_historical",
+                  });
+                }}
+                timeFormat="HH:mm"
+                dateFormat="dd/MM/yyyy HH:mm"
+                showTimeSelect
+                timeIntervals={60}
+                minDate={model.getHistoricalInterval()[0]}
+                maxDate={moment().toDate()}
+                // minTime={model.getFromTime()}
+                // maxTime={moment().add(1, "d").toDate()}
+              />
+            </div>
           </div>
         </div>
         <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
@@ -126,25 +204,12 @@ export default (dispatcher) => (model) => {
         <p class="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6">
           Report historical weather data
         </p>
-        <ReportHistoricalDataForm dispatcher={dispatcher} />
+        <div className="rounded-t-lg border-t border-l border-r border-gray-400 px-3 py-10 bg-gray-200 flex justify-center">
+          <ReportHistoricalDataForm dispatcher={dispatcher} />
+        </div>
       </div>
 
-      <section className="container mx-auto p-6 font-mono">
-        <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
-          <div className="w-full overflow-x-auto">
-            <table id="latestMeasurements" className="w-full">
-              <thead>
-                <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b border-gray-600">
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Value</th>
-                  <th className="px-4 py-3">Unit</th>
-                </tr>
-              </thead>
-              <MeasurementDataBody model={model} />
-            </table>
-          </div>
-        </div>
-      </section>
+      <MeasurementsTable />
     </div>
   );
 };

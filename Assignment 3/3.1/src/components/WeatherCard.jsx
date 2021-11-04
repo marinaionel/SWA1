@@ -74,12 +74,12 @@ const WeatherCard = ({ model }) => {
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "wind speed")[0].value
+                  .filter((d) => d.type === "wind speed")[0]?.value
               }{" "}
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "wind speed")[0].unit
+                  .filter((d) => d.type === "wind speed")[0]?.unit
               }
             </div>
           </div>
@@ -89,12 +89,12 @@ const WeatherCard = ({ model }) => {
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "precipitation")[0].value
+                  .filter((d) => d.type === "precipitation")[0]?.value
               }{" "}
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "precipitation")[0].unit
+                  .filter((d) => d.type === "precipitation")[0]?.unit
               }
             </div>
           </div>
@@ -104,12 +104,12 @@ const WeatherCard = ({ model }) => {
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "cloud coverage")[0].value
+                  .filter((d) => d.type === "cloud coverage")[0]?.value
               }
               {
                 model
                   .getLatestMeasurements()
-                  .filter((d) => d.type === "cloud coverage")[0].unit
+                  .filter((d) => d.type === "cloud coverage")[0]?.unit
               }
             </div>
           </div>

@@ -5,11 +5,11 @@ export default (store) => async (action) => {
   switch (action.type) {
     case "report_historical_data":
       let data = {
-        type: action.type.toLowerCase().trim(),
-        time: action.date,
-        place: action.city.trim(),
-        value: action.value,
-        unit: action.unit,
+        type: action.data.type.toLowerCase().trim(),
+        time: action.data.date,
+        place: action.data.city.trim(),
+        value: action.data.value,
+        unit: action.data.unit,
       };
       if (data.type === "precipitation") data.precipitationType = action.extra;
       if (data.type === "wind speed") data.direction = action.extra;

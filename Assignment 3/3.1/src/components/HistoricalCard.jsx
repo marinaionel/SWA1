@@ -3,7 +3,7 @@ import CloudIcon from "./CloudIcon";
 import WindIcon from "./WindIcon";
 import DropIcon from "./DropIcon";
 
-const ForecastCard = ({ hour, type, min, max, unit }) => {
+const HistoricalCard = ({ hour, type, value, unit }) => {
   return (
     <div className="inline-block px-3 ">
       <div className="bg-blue-700 w-40 h-60 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out">
@@ -20,11 +20,11 @@ const ForecastCard = ({ hour, type, min, max, unit }) => {
           {hour}:00
         </div>
         <p className="text-base text-center text-white">
-          {min} to {max} {unit}
+          {value} {unit}
         </p>
       </div>
     </div>
   );
 };
 
-export default ForecastCard;
+export default HistoricalCard;

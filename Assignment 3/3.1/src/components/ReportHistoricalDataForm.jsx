@@ -1,4 +1,4 @@
-import DatePicker from "react-datepicker";
+import moment from "moment";
 
 const TextFormField = ({ name, label, placeholder }) => {
   return (
@@ -22,12 +22,12 @@ const TextFormField = ({ name, label, placeholder }) => {
 const ReportHistoricalDataForm = ({ dispatcher }) => {
   return (
     <form
-      className="w-full max-w-lg"
+      className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
       onSubmit={(event) => {
         event.preventDefault();
         dispatcher()({
           type: "report_historical_data",
-          measurement: {
+          data: {
             city: event.target.city.value,
             type: event.target.type.value,
             value: event.target.value.value,
@@ -83,11 +83,10 @@ const ReportHistoricalDataForm = ({ dispatcher }) => {
           >
             Date
           </label>
-          <DatePicker
-            placeholderText={"date"}
-            showTimeSelect
-            timeIntervals={60}
+          <input
+            type="datetime-local"
             name="date"
+            max={moment().format("YYYY-MM-DDThh:mm")}
           />
         </div>
         <TextFormField
@@ -100,12 +99,11 @@ const ReportHistoricalDataForm = ({ dispatcher }) => {
       <div className="md:flex md:items-center">
         <div className="md:w-1/3"></div>
         <div className="md:w-2/3">
-          <button
+          <input
             className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-            type="button"
-          >
-            Submit
-          </button>
+            type="submit"
+            value="Submit"
+          />
         </div>
       </div>
     </form>

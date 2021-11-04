@@ -62,7 +62,7 @@ const model = (
       .map((data) => data.place)
       .filter((value, index, self) => self.indexOf(value) === index);
   const getHistoricalData = () =>
-    historicalData.filter((data) => data.place === getCity());
+    historicalData.filter((data) => data.place === city);
 
   const minimumTemperatureForTheLast5Days = () => {
     const now = new Date();
@@ -108,22 +108,21 @@ const model = (
       .filter((d) => d.type === PRECIPITATION)
       .map((d) => d.value)
       .map(Number)
-      .reduce((sum, current) => sum + current);
+      .reduce((sum, current) => sum + current, 0);
   };
 
   const averageWindSpeedForTheLast5Days = () => {
-    const now = new Date();
-    const fiveDaysAgo = new Date(now);
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-    return getHistoricalData()
-      .filter((d) => {
-        let thisDate = Date.parse(d.time);
-        return fiveDaysAgo <= thisDate && thisDate <= now;
-      })
+    const now = moment();
+    const fiveDaysAgo = moment();
+    fiveDaysAgo.add(-5, "d");
+    let values = getHistoricalData()
+      .filter((d) => moment(d.time).isBetween(fiveDaysAgo, now, null, "[]"))
       .filter((d) => d.type === WIND_SPEED)
       .map((d) => d.value)
-      .map(Number)
-      .reduce((a, v, i) => (a * i + v) / (i + 1));
+      .map(Number);
+    return values.length > 0
+      ? values.reduce((a, v, i) => (a * i + v) / (i + 1), 0)
+      : NaN;
   };
 
   const forecast = () => {
