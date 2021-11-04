@@ -1,6 +1,9 @@
 # Weather App with React.js
 This app uses [TailwindCSS](https://tailwindcss.com/), [moment.js](https://momentjs.com/), [axios](https://axios-http.com/), [craco](https://www.npmjs.com/package/@craco/craco).
 
+## Notes
+* The cities dropdown updates based on the cities in the historical data.
+
 ## Screenshots
 Below you can see some screenshots representing the app features.
 ![image](https://user-images.githubusercontent.com/19744901/140343506-c8221e66-acff-4cca-8a0a-84b0a0e40c16.png)
