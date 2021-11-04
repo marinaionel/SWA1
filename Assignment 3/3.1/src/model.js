@@ -126,18 +126,11 @@ const model = (
 
   const forecast = () => {
     let [from, to] = forecastInterval;
+    from = moment(from);
+    to = moment(to);
     return forecastData
       .filter((d) => d.place === getCity())
-      .filter((d) => {
-        let thisDate = new Date(Date.parse(d.time));
-        return (
-          moment(from)
-            .set("minute", 0)
-            .set("second", 0)
-            .set("millisecond", 0)
-            .toDate() <= thisDate && thisDate <= to
-        );
-      });
+      .filter((d) => moment(d.time).isBetween(from, to, "hours", "[]"));
   };
 
   const historical = () => {
