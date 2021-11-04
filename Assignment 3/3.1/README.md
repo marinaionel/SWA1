@@ -2,7 +2,7 @@
 This app uses [TailwindCSS](https://tailwindcss.com/), [moment.js](https://momentjs.com/), [axios](https://axios-http.com/), [craco](https://www.npmjs.com/package/@craco/craco).
 
 ## Notes
-* The cities dropdown updates based on the cities in the historical data.
+* The cities dropdown updates based on the cities in the historical data. This means that when reporting historical weather data with a new city, the city immediatly becomes available in the dropdown.
 
 ## Screenshots
 Below you can see some screenshots representing the app features.
