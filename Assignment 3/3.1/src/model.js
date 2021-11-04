@@ -53,7 +53,9 @@ const model = (
       [...historicalInterval]
     );
 
-  const getLatestMeasurements = () => getHistoricalData().slice(-4);
+  const getLatestMeasurements = () => {
+    return getHistoricalData().slice(-4);
+  };
   const getForecastInterval = () => [...forecastInterval];
   const getHistoricalInterval = () => [...historicalInterval];
   const getCity = () => city;
@@ -143,8 +145,16 @@ const model = (
 
   const historical = () => {
     let [from, to] = historicalInterval;
-
-    return {};
+    return getHistoricalData().filter((d) => {
+      let thisDate = new Date(Date.parse(d.time));
+      return (
+        moment(from)
+          .set("minute", 0)
+          .set("second", 0)
+          .set("millisecond", 0)
+          .toDate() <= thisDate && thisDate <= to
+      );
+    });
   };
 
   return {

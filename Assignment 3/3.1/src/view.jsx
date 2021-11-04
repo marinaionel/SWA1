@@ -5,6 +5,7 @@ import ReportHistoricalDataForm from "./components/ReportHistoricalDataForm";
 import ForecastCard from "./components/ForecastCard";
 import WeatherCard from "./components/WeatherCard";
 import MeasurementsTable from "./components/MeasurementsTable";
+import HistoricalCard from "./components/HistoricalCard";
 
 /* eslint-disable import/no-anonymous-default-export */
 export default (dispatcher) => (model) => {
@@ -85,8 +86,6 @@ export default (dispatcher) => (model) => {
                 timeIntervals={60}
                 minDate={moment().toDate()}
                 maxDate={moment().add(1, "d").toDate()}
-                // minTime={moment().toDate()}
-                // maxTime={moment().add(1, "d").toDate()}
               />
             </div>
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -109,8 +108,6 @@ export default (dispatcher) => (model) => {
                 timeIntervals={60}
                 minDate={model.getForecastInterval()[0]}
                 maxDate={moment().add(1, "d").toDate()}
-                // minTime={model.getFromTime()}
-                // maxTime={moment().add(1, "d").toDate()}
               />
             </div>
           </div>
@@ -155,8 +152,6 @@ export default (dispatcher) => (model) => {
                 showTimeSelect
                 timeIntervals={60}
                 maxDate={moment().toDate()}
-                // minTime={moment().toDate()}
-                // maxTime={moment().add(1, "d").toDate()}
               />
             </div>
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -179,20 +174,17 @@ export default (dispatcher) => (model) => {
                 timeIntervals={60}
                 minDate={model.getHistoricalInterval()[0]}
                 maxDate={moment().toDate()}
-                // minTime={model.getFromTime()}
-                // maxTime={moment().add(1, "d").toDate()}
               />
             </div>
           </div>
         </div>
         <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
           <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-            {model.forecast().map((element) => (
-              <ForecastCard
+            {model.historical().map((element) => (
+              <HistoricalCard
                 hour={new Date(element.time).getHours()}
                 type={element.type}
-                min={element.from}
-                max={element.to}
+                value={element.value}
                 unit={element.unit}
               />
             ))}
