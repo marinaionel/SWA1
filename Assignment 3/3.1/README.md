@@ -3,6 +3,7 @@ This app uses [TailwindCSS](https://tailwindcss.com/), [moment.js](https://momen
 
 ## Notes
 * The cities dropdown updates based on the cities in the historical data. This means that when reporting historical weather data with a new city, the city immediatly becomes available in the dropdown.
+* The temperatures in the weather card (under 'cloudy') are maximum and minimum temperature for the last 5 days.
 
 ## Screenshots
 Below you can see some screenshots representing the app features.
