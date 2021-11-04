@@ -22,16 +22,16 @@ export default (init_model, view, renderer) => {
         );
 
       case "set_from_historical":
-        return model.setHistoricalInterval([
+        return model.setHistoricalInterval(
           action.from,
-          model.getHistoricalInterval()[1],
-        ]);
+          model.getHistoricalInterval()[1]
+        );
 
       case "set_to_forecast":
-        return model.setForecastInterval([
+        return model.setForecastInterval(
           model.getForecastInterval()[0],
-          action.to,
-        ]);
+          action.to
+        );
 
       case "set_to_historical":
         return model.setHistoricalInterval(

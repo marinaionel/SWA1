@@ -138,16 +138,14 @@ export default (dispatcher) => (model) => {
                 From
               </label>
               <DatePicker
-                placeholderText="from..."
                 className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 selected={model.getHistoricalInterval()[0]}
-                onChange={(date) =>
+                onChange={(date) => {
                   dispatcher()({
                     from: date,
                     type: "set_from_historical",
-                  })
-                }
-                timeFormat="HH:mm"
+                  });
+                }}
                 dateFormat="dd/MM/yyyy HH:mm"
                 showTimeSelect
                 timeIntervals={60}
@@ -168,7 +166,6 @@ export default (dispatcher) => (model) => {
                     type: "set_to_historical",
                   });
                 }}
-                timeFormat="HH:mm"
                 dateFormat="dd/MM/yyyy HH:mm"
                 showTimeSelect
                 timeIntervals={60}
