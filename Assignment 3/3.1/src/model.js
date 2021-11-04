@@ -25,7 +25,6 @@ const model = (
       [...historicalData],
       [...forecastData],
       [...forecastInterval],
-      [...forecastInterval],
       [from, to]
     );
   const setCity = (_city) =>
@@ -53,9 +52,7 @@ const model = (
       [...historicalInterval]
     );
 
-  const getLatestMeasurements = () => {
-    return getHistoricalData().slice(-4);
-  };
+  const getLatestMeasurements = () => getHistoricalData().slice(-4);
   const getForecastInterval = () => [...forecastInterval];
   const getHistoricalInterval = () => [...historicalInterval];
   const getCity = () => city;
@@ -145,16 +142,11 @@ const model = (
 
   const historical = () => {
     let [from, to] = historicalInterval;
-    return getHistoricalData().filter((d) => {
-      let thisDate = new Date(Date.parse(d.time));
-      return (
-        moment(from)
-          .set("minute", 0)
-          .set("second", 0)
-          .set("millisecond", 0)
-          .toDate() <= thisDate && thisDate <= to
-      );
-    });
+    from = moment(from);
+    to = moment(to);
+    return getHistoricalData().filter((d) =>
+      moment(d.time).isBetween(from, to, "hours", "[]")
+    );
   };
 
   return {

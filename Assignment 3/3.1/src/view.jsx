@@ -201,7 +201,7 @@ export default (dispatcher) => (model) => {
         </div>
       </div>
 
-      <MeasurementsTable />
+      <MeasurementsTable model={model} />
     </div>
   );
 };
