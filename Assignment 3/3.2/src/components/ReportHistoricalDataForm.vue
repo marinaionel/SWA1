@@ -1,3 +1,25 @@
+<script>
+import TextFormField from "./TextFormField.vue";
+import * as moment from "moment";
+
+export default {
+  name: "ReportHistoricalDataForm",
+  components: {
+    "text-form-field": TextFormField,
+  },
+  props: {
+    submitFunc: Function,
+  },
+  data: function () {
+    return {
+      now() {
+        return moment().format("YYYY-MM-DDThh:mm");
+      },
+    };
+  },
+};
+</script>
+
 <template>
   <form
     className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -52,11 +74,7 @@
         >
           Date
         </label>
-        <input
-          type="datetime-local"
-          name="date"
-          :max="moment().format('YYYY-MM-DDThh:mm')"
-        />
+        <input type="datetime-local" name="date" :max="now()" />
       </div>
       <text-form-field
         :label="'Wind Direction / Precipitation Type'"
@@ -76,18 +94,5 @@
     </div>
   </form>
 </template>
-
-<script>
-import TextFormField from "./TextFormField.vue";
-export default {
-  name: "ReportHistoricalDataForm",
-  components: {
-    "text-form-field": TextFormField,
-  },
-  props: {
-    submitFunc: Function,
-  },
-};
-</script>
 
 <style></style>

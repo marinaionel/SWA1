@@ -1,7 +1,7 @@
 <template>
   <div className="min-h-screen flex items-center justify-center">
     <div className="flex flex-col bg-white rounded p-4 w-full max-w-xs">
-      <div className="font-bold text-xl">{{ model.getCity() }}</div>
+      <div className="font-bold text-xl">{{ city }}</div>
       <div className="text-sm text-gray-500">
         {{
           new Date().toLocaleString("en", {
@@ -116,6 +116,18 @@
 <script>
 export default {
   name: "WeatherCard",
+  data: (instance) => ({
+    latestMeasurements: instance.latestMeasurementsprop,
+    minimumTemperature: instance.minimumTemperatureprop,
+    maximumTemperature: instance.maximumTemperatureprop,
+    city: instance.cityprop,
+  }),
+  props: [
+    "latestMeasurementsprop",
+    "minimumTemperatureprop",
+    "maximumTemperatureprop",
+    "cityprop",
+  ],
 };
 </script>
 

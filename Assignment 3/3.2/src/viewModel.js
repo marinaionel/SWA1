@@ -1,4 +1,6 @@
-export default (el, init_model) => {
+const axios = require("axios").default;
+
+export default (init_model) => {
   let model = init_model;
 
   async function updateHistoricalAndForecast() {
@@ -13,69 +15,72 @@ export default (el, init_model) => {
 
     model.setHistoricalData(h).setForecastData(f);
   }
+  console.log(updateHistoricalAndForecast);
+  return model;
 
-  return {
-    el,
-    data: {
-      cities: model.getCities(),
-      historicalData: model.historical(),
-      forecast: model.forecast(),
-      averageWindSpeed: model.averageWindSpeed()?.toFixed(2),
-      totalPrecipitations: model.totalPrecipitation()?.toFixed(2),
-      latestMeasurements: model.getLatestMeasurements(),
-      maximumTemperature: model.maximumTemperature(),
-      minimumTemperature: model.minimumTemperature(),
-    },
-    computed: {
-      city: {
-        get() {
-          return model.getCity();
-        },
-        set(v) {
-          model.setCity(v);
-        },
-      },
-      fromForecast: {
-        get() {
-          return model.getForecastInterval()[0];
-        },
-        set(v) {
-          model.setForecastInterval(v, model.getForecastInterval()[1]);
-        },
-      },
-      toForecast: {
-        get() {
-          return model.getForecastInterval()[1];
-        },
-        set(v) {
-          model.setForecastInterval(model.getForecastInterval()[0], v);
-        },
-      },
-      fromHistorical: {
-        get() {
-          return model.getHistoricalInterval()[0];
-        },
-        set(v) {
-          model.setHistoricalInterval(v, model.getHistoricalInterval()[1]);
-        },
-      },
-      toHistorical: {
-        get() {
-          return model.getHistoricalInterval()[1];
-        },
-        set(v) {
-          model.setHistoricalInterval(model.getHistoricalInterval()[0], v);
-        },
-      },
-    },
-    methods: {
-      async reportHistoricalData(data) {
-        await axios.post(`http://localhost:8080/data`, data);
-        await updateHistoricalAndForecast();
-      },
-      async update() {
-        await updateHistoricalAndForecast();
-      },
-    },
-  };
+  // return {
+  //   data: function () {
+  //     return {
+  //       cities: model.getCities(),
+  //       historicalData: model.historical(),
+  //       forecast: model.forecast(),
+  //       averageWindSpeed: model.averageWindSpeed()?.toFixed(2),
+  //       totalPrecipitations: model.totalPrecipitation()?.toFixed(2),
+  //       latestMeasurements: model.getLatestMeasurements(),
+  //       maximumTemperature: model.maximumTemperature(),
+  //       minimumTemperature: model.minimumTemperature(),
+  //     };
+  //   },
+  //   computed: {
+  //     city: {
+  //       get() {
+  //         return model.getCity();
+  //       },
+  //       set(v) {
+  //         model.setCity(v);
+  //       },
+  //     },
+  //     fromForecast: {
+  //       get() {
+  //         return model.getForecastInterval()[0];
+  //       },
+  //       set(v) {
+  //         model.setForecastInterval(v, model.getForecastInterval()[1]);
+  //       },
+  //     },
+  //     toForecast: {
+  //       get() {
+  //         return model.getForecastInterval()[1];
+  //       },
+  //       set(v) {
+  //         model.setForecastInterval(model.getForecastInterval()[0], v);
+  //       },
+  //     },
+  //     fromHistorical: {
+  //       get() {
+  //         return model.getHistoricalInterval()[0];
+  //       },
+  //       set(v) {
+  //         model.setHistoricalInterval(v, model.getHistoricalInterval()[1]);
+  //       },
+  //     },
+  //     toHistorical: {
+  //       get() {
+  //         return model.getHistoricalInterval()[1];
+  //       },
+  //       set(v) {
+  //         model.setHistoricalInterval(model.getHistoricalInterval()[0], v);
+  //       },
+  //     },
+  //   },
+  //   methods: {
+  //     async reportHistoricalData(data) {
+  //       await axios.post(`http://localhost:8080/data`, data);
+  //       await updateHistoricalAndForecast();
+  //     },
+  //     async update() {
+  //       await updateHistoricalAndForecast();
+  //     },
+  //   },
+  // };
 };
