@@ -40,7 +40,9 @@
         >
           Select a city
         </div>
-        <vSelect :options="[[cities]]" />
+        <select v-model="city">
+          <option v-for="c in cities" :key="c">{{ c }}</option>
+        </select>
       </section>
     </div>
 
@@ -207,18 +209,17 @@ import * as moment from "moment";
 
 export default {
   name: "App",
-  data: function (instance) {
+  data: function () {
     return {
       moment,
-      model: instance.modelprop,
-      cities: instance.modelprop.getCities(),
-      historicalData: instance.modelprop.historical(),
-      forecast: instance.modelprop.forecast(),
-      averageWindSpeed: instance.modelprop.averageWindSpeed()?.toFixed(2),
-      totalPrecipitations: instance.modelprop.totalPrecipitation()?.toFixed(2),
-      latestMeasurements: instance.modelprop.getLatestMeasurements(),
-      maximumTemperature: instance.modelprop.maximumTemperature(),
-      minimumTemperature: instance.modelprop.minimumTemperature(),
+      cities: this.model.getCities(),
+      historicalData: this.model.historical(),
+      forecast: this.model.forecast(),
+      averageWindSpeed: this.model.averageWindSpeed()?.toFixed(2),
+      totalPrecipitations: this.model.totalPrecipitation()?.toFixed(2),
+      latestMeasurements: this.model.getLatestMeasurements(),
+      maximumTemperature: this.model.maximumTemperature(),
+      minimumTemperature: this.model.minimumTemperature(),
     };
   },
 
@@ -228,7 +229,7 @@ export default {
         return this.model.getCity();
       },
       set(v) {
-        this.model.setCity(v);
+        this.model = this.model.setCity(v);
       },
     },
     fromForecast: {
@@ -276,8 +277,7 @@ export default {
       },
     },
   },
-
-  props: ["modelprop"],
+  props: ["model"],
   components: {
     ReportHistoricalDataForm,
     WeatherCard,

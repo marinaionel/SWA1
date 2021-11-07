@@ -5,9 +5,7 @@ import viewmodel from "./viewModel.js";
 import App from "./App.vue";
 const axios = require("axios").default;
 import "./main.css";
-import "vue-select/dist/vue-select.css";
 import DatePicker from "vue3-datepicker";
-import vSelect from "vue-select";
 
 (async () => {
   const city = "Horsens";
@@ -36,7 +34,7 @@ import vSelect from "vue-select";
   );
   const vm = viewmodel(theModel);
   let app = createApp({
-    template: `<App :modelprop="model" />`,
+    template: `<App :model="model" />`,
     data: function () {
       return {
         model: vm,
@@ -47,7 +45,6 @@ import vSelect from "vue-select";
     },
   });
 
-  app.component("vSelect", vSelect);
   app.component("DatePicker", DatePicker);
   app.mount("#app");
 })();
