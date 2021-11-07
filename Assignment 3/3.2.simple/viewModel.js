@@ -5,24 +5,16 @@ const viewModel = (el, init_model) => {
 
   return {
     el,
-    components: { DatePicker },
-
     data: {
       moment: moment,
       city: "Horsens",
       cities: [],
       historicalAll: [],
       forcastAll: [],
-      historicalInterval: [past, now],
-      forecastInterval: [now, future],
-
-      //cities: model.getCities(),
-      // historicalData: model.historical(),
-      // forecast: model.forecast(),
-      // averageWindSpeed: model.averageWindSpeed()?.toFixed(2),
-      // totalPrecipitations: model.totalPrecipitation()?.toFixed(2),
-      // maximumTemperature: model.maximumTemperature(),
-      // minimumTemperature: model.minimumTemperature(),
+      fromHistorical: past,
+      toHistorical: now,
+      fromForecast: now,
+      toForecast: future,
     },
     created: async function () {
       const city = "Horsens";
@@ -46,55 +38,37 @@ const viewModel = (el, init_model) => {
         },
       },
       historical: {
+        cache: false,
         get() {
-          return this.historicalAll.filter((e) => e.place == this.city);
+          return this.historicalAll
+            .filter((e) => e.place == this.city)
+            .filter((e) =>
+              moment(e.time).isBetween(
+                this.fromHistorical,
+                this.toHistorical,
+                undefined,
+                "[]"
+              )
+            );
         },
       },
       forecast: {
+        cache: false,
         get() {
-          return this.forcastAll.filter((e) => e.place == this.city);
-        },
-      },
-      fromForecast: {
-        get() {
-          console.log(this.fromForecast)
-          return this.forecastInterval[0];
-        },
-        set(v) {
-          this.forecastInterval[0] = v;
-        },
-      },
-      toForecast: {
-        get() {
-          console.log(this.toForecast)
-          return this.forecastInterval[1];
-        },
-        set(v) {
-          this.forecastInterval[1] = v;
-        },
-      },
-      fromHistorical: {
-        get() {
-          return model.getHistoricalInterval()[0];
-        },
-        set(v) {
-          model.setHistoricalInterval(v, model.getHistoricalInterval()[1]);
-        },
-      },
-      toHistorical: {
-        get() {
-          return model.getHistoricalInterval()[1];
-        },
-        set(v) {
-          model.setHistoricalInterval(model.getHistoricalInterval()[0], v);
+          return this.forcastAll
+            .filter((e) => e.place == this.city)
+            .filter((d) =>
+              moment(d.time).isBetween(
+                this.fromForecast,
+                this.toForecast,
+                "hours",
+                "[]"
+              )
+            );
         },
       },
     },
     methods: {
-      // setCity(city) {
-      //   model = model.setCity(v);
-      //   this.city = model.getCity();
-      // },
       async reportHistoricalData(data) {
         await axios.post(`http://localhost:8080/data`, data);
         await updateHistoricalAndForecast();
@@ -104,16 +78,13 @@ const viewModel = (el, init_model) => {
       },
 
       minimumTemperature() {
-        if (
-          this.historicalInterval[0] != undefined &&
-          this.historicalInterval[1] != undefined
-        )
+        if (this.fromHistorical != undefined && this.toHistorical != undefined)
           return Math.min(
             ...this.historical
               .filter((d) =>
                 moment(d.time).isBetween(
-                  moment(this.historicalInterval[0]),
-                  moment(this.historicalInterval[1]),
+                  moment(this.fromHistorical),
+                  moment(this.toHistorical),
                   undefined,
                   "[]"
                 )
@@ -129,8 +100,8 @@ const viewModel = (el, init_model) => {
           ...this.historical
             .filter((d) =>
               moment(d.time).isBetween(
-                moment(this.historicalInterval[0]),
-                moment(this.historicalInterval[1]),
+                moment(this.fromHistorical),
+                moment(this.toHistorical),
                 undefined,
                 "[]"
               )
@@ -145,8 +116,8 @@ const viewModel = (el, init_model) => {
         return this.historical
           .filter((d) =>
             moment(d.time).isBetween(
-              moment(this.historicalInterval[0]),
-              moment(this.historicalInterval[1]),
+              moment(this.fromHistorical),
+              moment(this.toHistorical),
               undefined,
               "[]"
             )
@@ -161,8 +132,8 @@ const viewModel = (el, init_model) => {
         let values = this.historical
           .filter((d) =>
             moment(d.time).isBetween(
-              moment(this.historicalInterval[0]),
-              moment(this.historicalInterval[1]),
+              moment(this.fromHistorical),
+              moment(this.toHistorical),
               undefined,
               "[]"
             )
@@ -173,6 +144,21 @@ const viewModel = (el, init_model) => {
         return values.length > 0
           ? values.reduce((a, v, i) => (a * i + v) / (i + 1), 0)
           : NaN;
+      },
+    },
+    watch: {
+      fromForecast: function (v) {
+        return new Date(v);
+      },
+      toForecast: function (v) {
+        return new Date(v);
+      },
+      fromHistorical: function (v) {
+        return new Date(v);
+      },
+      toHistorical: function (v) {
+        console.log(v);
+        return new Date(v);
       },
     },
   };

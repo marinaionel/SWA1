@@ -22,40 +22,16 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="./model.js"></script>
     <script src="./viewModel.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue2-datepicker@1.9.6/dist/build.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script>
-      window.init = async function () {
-        // const persons = await fetch('http://localhost:9090/persons').then(res => res.json())
-        // const employees = await fetch('http://localhost:9090/employees').then(res => res.json())
-        // const theModel = model(persons, employees)
-        // const vm = viewmodel(document.getElementById('base'), theModel)
-        // const app = new Vue(vm)
-
-        // console.log(historical);
-
-        // const today = moment();
-        // today.set("minutes", 0);
-        // const to = moment(today);
-        // const yesterday = moment(today);
-        // yesterday.add(-1, "d");
-        // to.add(12, "h");
-
-        // const theModel = model(
-        //   city,
-        //   historical,
-        //   forecast,
-        //   [today.toDate(), to.toDate()],
-        //   [yesterday.toDate(), today.toDate()]
-        // );
-        Vue.use(DatePicker.default);
-
-        const vm = viewModel(document.getElementById("base"));
-        const app = new Vue(vm);
-      };
+      const PRECIPITATION = "precipitation";
+        const TEMPERATURE = "temperature";
+        const WIND_SPEED = "wind speed";
+        window.init = async function () {
+            const vm = viewModel(document.getElementById("base"));
+            const app = new Vue(vm);
+        };
     </script>
   </head>
   <body onload="init()">
@@ -245,9 +221,6 @@
                             px-4 leading-tight focus:outline-none focus:bg-white
                             focus:border-gray-500"
                 v-model="fromForecast"
-                step="60"
-                :min="moment().toDate()"
-                :max="moment().add(1, 'd').toDate()"
               ></input>
             </div>
             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -262,27 +235,98 @@
                             leading-tight focus:outline-none focus:bg-white
                             focus:border-gray-500"
                 v-model="toForecast"
-                step="60"
-                :min="fromForecast"
-                :max="moment().add(1, 'd').toDate()"
               ></input>
             </div>
           </div>
         </div>
         <div class="flex overflow-x-scroll pb-10 hide-scroll-bar">
           <div class="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-            <div v-for="element in forecast" :key="element">
-              <ForecastCard
-                :hour="new Date(element.time).getHours()"
-                :type="element.type"
-                :min="element.from"
-                :max="element.to"
-                :unit="element.unit"
-              />
+            <div v-for="element in forecast" :key="element.time+element.type">
+           
+              <div class="inline-block px-3 ">
+                <div
+                  class="bg-blue-700 w-40 h-60 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out"
+                >
+                  <!-- <div v-if="element.type === 'temperature'">te</div>
+                  <div v-else-if="element.type === 'cloud coverage'"><cloud-icon /></div>
+                  <div v-else-if="element.type === 'wind speed'"><wind-icon /></div>
+                  <div v-else-if="element.type === 'precipitation'"><drop-icon /></div> -->
+            
+                  <div class="font-bold text-xl mb-2 text-center text-white">
+                    {{ moment(element.time).format('LLLL') }}
+                  </div>
+                  <p class="text-base text-center text-white">
+                    {{ element.from }} to {{ element.to }} {{ element.unit }}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- historical data -->
+    <div class="flex flex-col bg-white m-auto p-auto">
+        <div>
+        <p
+            class="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6"
+        >
+            Weather Historical Values
+        </p>
+        <div class="w-full max-w-lg flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            >
+                From
+            </label>
+            <input type="datetime-local"
+            class="appearance-none
+                        block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3
+                        px-4 leading-tight focus:outline-none focus:bg-white
+                        focus:border-gray-500"
+            v-model="fromHistorical"
+          ></input>
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label
+                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            >
+                To
+            </label>
+            <input type="datetime-local"
+            class="appearance-none
+                        block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3
+                        px-4 leading-tight focus:outline-none focus:bg-white
+                        focus:border-gray-500"
+            v-model="toHistorical"
+          ></input>
+            </div>
+        </div>
+        </div>
+        <div class="flex overflow-x-scroll pb-10 hide-scroll-bar">
+        <div class="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
+            <div v-for="element in historical" :key="element.time+element.type">
+                <div class="inline-block px-3 ">
+                    <div
+                      class="bg-blue-700 w-40 h-60 max-w-xs overflow-hidden rounded-lg shadow-md bg-white hover:shadow-xl transition-shadow duration-300 ease-in-out"
+                    >
+                      <!-- <div v-if="type === 'temperature'"><temperature-icon /></div>
+                      <div v-else-if="type === 'cloud coverage'"><cloud-icon /></div>
+                      <div v-else-if="type === 'wind speed'"><wind-icon /></div>
+                      <div v-else-if="type === 'precipitation'"><drop-icon /></div> -->
+                
+                      <div class="font-bold text-xl mb-2 text-center text-white">
+                        {{ moment(element.time).format('LLLL') }}:00
+                      </div>
+                      <p class="text-base text-center text-white">{{ element.value }} {{ element.unit }}</p>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        </div>
+    </div>
+  
     </div>
   </body>
 </html>
