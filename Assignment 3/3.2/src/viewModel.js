@@ -18,6 +18,55 @@ export default (el, init_model) => {
     el,
     data: {
       cities: model.getCities(),
+      historicalData: model.historical(),
+      forecast: model.forecast(),
+      averageWindSpeed: model.averageWindSpeed()?.toFixed(2),
+      totalPrecipitations: model.totalPrecipitation()?.toFixed(2),
+      latestMeasurements: model.getLatestMeasurements(),
+      maximumTemperature: model.maximumTemperature(),
+      minimumTemperature: model.minimumTemperature(),
+    },
+    computed: {
+      city: {
+        get() {
+          return model.getCity();
+        },
+        set(v) {
+          model.setCity(v);
+        },
+      },
+      fromForecast: {
+        get() {
+          return model.getForecastInterval()[0];
+        },
+        set(v) {
+          model.setForecastInterval(v, model.getForecastInterval()[1]);
+        },
+      },
+      toForecast: {
+        get() {
+          return model.getForecastInterval()[1];
+        },
+        set(v) {
+          model.setForecastInterval(model.getForecastInterval()[0], v);
+        },
+      },
+      fromHistorical: {
+        get() {
+          return model.getHistoricalInterval()[0];
+        },
+        set(v) {
+          model.setHistoricalInterval(v, model.getHistoricalInterval()[1]);
+        },
+      },
+      toHistorical: {
+        get() {
+          return model.getHistoricalInterval()[1];
+        },
+        set(v) {
+          model.setHistoricalInterval(model.getHistoricalInterval()[0], v);
+        },
+      },
     },
     methods: {
       async reportHistoricalData(data) {
@@ -26,21 +75,6 @@ export default (el, init_model) => {
       },
       async update() {
         await updateHistoricalAndForecast();
-      },
-      chooseCity(city) {
-        model.setCity(city);
-      },
-      setFromForecast(from) {
-        model.setForecastInterval(from, model.getForecastInterval()[1]);
-      },
-      setFromHistorical(from) {
-        model.setHistoricalInterval(from, model.getHistoricalInterval()[1]);
-      },
-      setToForecast(to) {
-        model.setForecastInterval(model.getForecastInterval()[0], to);
-      },
-      setToHistorical() {
-        model.setHistoricalInterval(model.getHistoricalInterval()[0], to);
       },
     },
   };

@@ -55,7 +55,7 @@
         <input
           type="datetime-local"
           name="date"
-          max='moment().format("YYYY-MM-DDThh:mm")'
+          :max="moment().format('YYYY-MM-DDThh:mm')"
         />
       </div>
       <text-form-field

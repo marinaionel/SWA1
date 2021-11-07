@@ -63,59 +63,70 @@ const model = (
   const getHistoricalData = () =>
     historicalData.filter((data) => data.place === city);
 
-  const minimumTemperatureForTheLast5Days = () => {
-    const now = new Date();
-    const fiveDaysAgo = new Date(now);
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
-    return Math.min(
-      ...getHistoricalData()
-        .filter((d) => {
-          let thisDate = Date.parse(d.time);
-          return fiveDaysAgo <= thisDate && thisDate <= now;
-        })
-        .filter((d) => d.type === TEMPERATURE)
-        .map((d) => d.value)
-        .map(Number)
-    );
+  const minimumTemperature = () => {
+    if (
+      getHistoricalInterval()[0] != undefined &&
+      getHistoricalInterval()[1] != undefined
+    )
+      return Math.min(
+        ...getHistoricalData()
+          .filter((d) =>
+            moment(d.time).isBetween(
+              moment(getHistoricalInterval()[0]),
+              moment(getHistoricalInterval()[1]),
+              undefined,
+              "[]"
+            )
+          )
+          .filter((d) => d.type === TEMPERATURE)
+          .map((d) => d.value)
+          .map(Number)
+      );
   };
 
-  const maximumTemperatureForTheLast5Days = () => {
-    const now = new Date();
-    const fiveDaysAgo = new Date(now);
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+  const maximumTemperature = () => {
     return Math.max(
       ...getHistoricalData()
-        .filter((d) => {
-          let thisDate = Date.parse(d.time);
-          return fiveDaysAgo <= thisDate && thisDate <= now;
-        })
+        .filter((d) =>
+          moment(d.time).isBetween(
+            moment(getHistoricalInterval()[0]),
+            moment(getHistoricalInterval()[1]),
+            undefined,
+            "[]"
+          )
+        )
         .filter((data) => data.type === TEMPERATURE)
         .map((data) => data.value)
         .map(Number)
     );
   };
 
-  const totalPrecipitationForTheLast5Days = () => {
-    const now = new Date();
-    const fiveDaysAgo = new Date(now);
-    fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
+  const totalPrecipitation = () => {
     return getHistoricalData()
-      .filter((d) => {
-        let thisDate = Date.parse(d.time);
-        return fiveDaysAgo <= thisDate && thisDate <= now;
-      })
+      .filter((d) =>
+        moment(d.time).isBetween(
+          moment(getHistoricalInterval()[0]),
+          moment(getHistoricalInterval()[1]),
+          undefined,
+          "[]"
+        )
+      )
       .filter((d) => d.type === PRECIPITATION)
       .map((d) => d.value)
       .map(Number)
       .reduce((sum, current) => sum + current, 0);
   };
 
-  const averageWindSpeedForTheLast5Days = () => {
-    const now = moment();
-    const fiveDaysAgo = moment();
-    fiveDaysAgo.add(-5, "d");
+  const averageWindSpeed = () => {
     let values = getHistoricalData()
-      .filter((d) => moment(d.time).isBetween(fiveDaysAgo, now, null, "[]"))
+      .filter((d) =>
+        moment(d.time).isBetween(
+          moment(getHistoricalInterval()[0]),
+          moment(getHistoricalInterval()[1]),
+          undefined,
+          "[]"
+        )
+      )
       .filter((d) => d.type === WIND_SPEED)
       .map((d) => d.value)
       .map(Number);
@@ -153,10 +164,10 @@ const model = (
     setHistoricalData,
     setForecastData,
     getLatestMeasurements,
-    minimumTemperatureForTheLast5Days,
-    maximumTemperatureForTheLast5Days,
-    totalPrecipitationForTheLast5Days,
-    averageWindSpeedForTheLast5Days,
+    minimumTemperature,
+    maximumTemperature,
+    totalPrecipitation,
+    averageWindSpeed,
     forecast,
     historical,
   };
