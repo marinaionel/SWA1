@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <title>People</title>
+    <style>
+      td {
+        width: 40px;
+        height: 40px;
+        border: 1px solid black;
+      }
+      table {
+        border: 1px solid black;
+        border-spacing: 0;
+      }
+    </style>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"
+      integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./model.js"></script>
+    <script src="./viewModel.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+      window.init = async function () {
+        // const persons = await fetch('http://localhost:9090/persons').then(res => res.json())
+        // const employees = await fetch('http://localhost:9090/employees').then(res => res.json())
+        // const theModel = model(persons, employees)
+        // const vm = viewmodel(document.getElementById('base'), theModel)
+        // const app = new Vue(vm)
+
+        const city = "Horsens";
+        let historical = await fetch(`http://localhost:8080/data`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        let forecast = await fetch(`http://localhost:8080/forecast`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        console.log(historical);
+
+        const today = moment();
+        today.set("minutes", 0);
+        const to = moment(today);
+        const yesterday = moment(today);
+        yesterday.add(-1, "d");
+        to.add(12, "h");
+
+        const theModel = model(
+          city,
+          historical,
+          forecast,
+          [today.toDate(), to.toDate()],
+          [yesterday.toDate(), today.toDate()]
+        );
+
+        const vm = viewModel(document.getElementById("base"), theModel);
+        const app = new Vue(vm);
+      };
+    </script>
+  </head>
+  <body onload="init()">
+    <div id="base">{{city}}</div>
+  </body>
+</html>
