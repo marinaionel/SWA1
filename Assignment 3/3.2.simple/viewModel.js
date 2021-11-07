@@ -15,6 +15,13 @@ const viewModel = (el, init_model) => {
       toHistorical: now,
       fromForecast: now,
       toForecast: future,
+      // report data
+      rCity: "",
+      rUnit: "",
+      rValue: "",
+      rType: "",
+      rDate: new Date(),
+      rExtra: "",
     },
     created: async function () {
       const city = "Horsens";
@@ -69,14 +76,46 @@ const viewModel = (el, init_model) => {
       },
     },
     methods: {
-      async reportHistoricalData(data) {
-        await axios.post(`http://localhost:8080/data`, data);
-        await updateHistoricalAndForecast();
-      },
       async update() {
-        await updateHistoricalAndForecast();
+        this.historicalAll = await fetch(`http://localhost:8080/data`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        this.forcastAll = await fetch(`http://localhost:8080/forecast`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        this.cities = this.historicalAll
+          .map((data) => data.place)
+          .filter((value, index, self) => self.indexOf(value) === index);
       },
+      async submitFunc() {
+        let data = {
+          type: this.rType,
+          time: this.rDate,
+          place: this.rCity,
+          value: this.rValue,
+          unit: this.rUnit,
+        };
+        if (data.type === "precipitation") data.precipitationType = this.rExtra;
+        if (data.type === "wind speed") data.direction = this.rExtra;
 
+        await fetch(`http://localhost:8080/data`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        this.historicalAll = await fetch(`http://localhost:8080/data`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        this.forcastAll = await fetch(`http://localhost:8080/forecast`)
+          .then((res) => res.json())
+          .catch((error) => console.log(error));
+        this.cities = this.historicalAll
+          .map((data) => data.place)
+          .filter((value, index, self) => self.indexOf(value) === index);
+      },
       minimumTemperature() {
         if (this.fromHistorical != undefined && this.toHistorical != undefined)
           return Math.min(
@@ -147,6 +186,7 @@ const viewModel = (el, init_model) => {
       },
     },
     watch: {
+      // these watchers are required because the html datepickers send the date here as string
       fromForecast: function (v) {
         return new Date(v);
       },
