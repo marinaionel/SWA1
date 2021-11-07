@@ -1,55 +1,5 @@
-<!DOCTYPE html>
-<head>
-  <title>Weather</title>
-  <script>
-    import * as moment from "moment";
-    import Vue from "vue";
-    import ReportHistoricalDataForm from "./components/ReportHistoricalDataForm.vue";
-    import WeatherCard from "./components/WeatherCard.vue";
-    import MeasurementsTable from "./components/MeasurementsTable.vue";
-    import ForecastCard from "./components/ForecastCard.vue";
-    import HistoricalCard from "./components/HistoricalCard.vue";
-
-    Vue.prototype.moment = moment;
-
-    import model from "./model.js";
-    import viewmodel from "./viewmodel.js";
-    import moment from "moment";
-    const axios = require("axios").default;
-
-    window.init = async function () {
-      const city = "Horsens";
-      let historical = await axios
-        .get(`http://localhost:8080/data`)
-        .then((res) => res.data)
-        .catch((error) => console.log(error));
-      let forecast = await axios
-        .get(`http://localhost:8080/forecast`)
-        .then((res) => res.data)
-        .catch((error) => console.log(error));
-
-      const today = moment();
-      today.set("minutes", 0);
-      const to = moment(today);
-      const yesterday = moment(today);
-      yesterday.add(-1, "d");
-      to.add(12, "h");
-
-      const theModel = model(
-        city,
-        historical,
-        forecast,
-        [today.toDate(), to.toDate()],
-        [yesterday.toDate(), today.toDate()]
-      );
-
-      const vm = viewmodel(document.getElementById("base"), theModel);
-      const app = new Vue(vm);
-    };
-  </script>
-</head>
-<body onload="init()">
-  <div id="base" className="px-4 sm:px-6 md:px-8 mb-14 sm:mb-20 xl:mb-8">
+<template>
+  <div className="px-4 sm:px-6 md:px-8 mb-14 sm:mb-20 xl:mb-8">
     <div className="px-4 sm:px-6 md:px-8 mb-10 sm:mb-16 md:mb-20">
       <h2
         className="sm:text-lg sm:leading-snug font-semibold tracking-wide uppercase text-purple-600 mb-3"
@@ -59,25 +9,25 @@
       <p
         className="text-3xl sm:text-5xl lg:text-6xl leading-none font-extrabold text-gray-900 tracking-tight mb-8"
       >
-        {{city}}
+        {{ city }}
       </p>
       <p
         className="max-w-4xl text-lg sm:text-2xl font-medium sm:leading-10 space-y-6 mb-6"
       >
-        See the latest weather measurements in {{city}} below.
+        See the latest weather measurements in {{ city }} below.
       </p>
       <h1
         className="inline-block text-3xl font-extrabold text-gray-900 tracking-tight md:capitalize"
       >
         Average wind speed:
       </h1>
-      <p className="mt-1 text-lg text-gray-500">{{averageWindSpeed}} m/s</p>
+      <p className="mt-1 text-lg text-gray-500">{{ averageWindSpeed }} m/s</p>
       <h1
         className="inline-block text-3xl font-extrabold text-gray-900 tracking-tight md:capitalize"
       >
         Total precipitations:
       </h1>
-      <p className="mt-1 text-lg text-gray-500">{{totalPrecipitations}} mm</p>
+      <p className="mt-1 text-lg text-gray-500">{{ totalPrecipitations }} mm</p>
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         v-on:click="update"
@@ -90,12 +40,18 @@
         >
           Select a city
         </div>
-        <!-- <Select value={{ value: model.getCity(), label: model.getCity() }}
-        onChange={handleChange} options={options} /> -->
+        <select v-model="city">
+          <option v-for="c in cities" :key="c">{{ c }}</option>
+        </select>
       </section>
     </div>
 
-    <WeatherCard />
+    <WeatherCard
+      :latestMeasurementsprop="model.getLatestMeasurements()"
+      :minimumTemperatureprop="model.minimumTemperature()"
+      :maximumTemperatureprop="model.maximumTemperature()"
+      :cityprop="model.getCity()"
+    />
 
     <div className="flex flex-col bg-white m-auto p-auto">
       <div>
@@ -111,14 +67,20 @@
             >
               From
             </label>
-            <!-- <DatePicker placeholderText="from..." className="appearance-none
+            <DatePicker
+              placeholderText="from..."
+              className="appearance-none
             block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3
             px-4 leading-tight focus:outline-none focus:bg-white
-            focus:border-gray-500" selected={model.getForecastInterval()[0]}
-            onChange={(date) => dispatcher()({ from: date, type:
-            "set_from_forecast", }) } timeFormat="HH:mm" dateFormat="dd/MM/yyyy
-            HH:mm" showTimeSelect timeIntervals={60} minDate={moment().toDate()}
-            maxDate={moment().add(1, "d").toDate()} /> -->
+            focus:border-gray-500"
+              v-model="fromForecast"
+              dateFormat="dd/MM/yyyy
+            HH:mm"
+              showTimeSelect
+              timeIntervals="{60}"
+              minDate="{{moment().toDate()}}"
+              maxDate="{{moment().add(1, 'd').toDate()}}"
+            />
           </div>
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
@@ -126,21 +88,26 @@
             >
               To
             </label>
-            <!-- <DatePicker placeholderText="to..." className="appearance-none block
+            <DatePicker
+              placeholderText="to..."
+              className="appearance-none block
             bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4
             leading-tight focus:outline-none focus:bg-white
-            focus:border-gray-500" selected={model.getForecastInterval()[1]}
-            onChange={(date) => { dispatcher()({ to: date, type:
-            "set_to_forecast", }); }} timeFormat="HH:mm" dateFormat="dd/MM/yyyy
-            HH:mm" showTimeSelect timeIntervals={60}
-            minDate={model.getForecastInterval()[0]} maxDate={moment().add(1,
-            "d").toDate()} /> -->
+            focus:border-gray-500"
+              v-model="toForecast"
+              dateFormat="dd/MM/yyyy
+            HH:mm"
+              showTimeSelect
+              timeIntervals="{60}"
+              minDate="{{fromForecast}}"
+              maxDate="{{ moment().add(1, 'd').toDate() }}"
+            />
           </div>
         </div>
       </div>
       <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
         <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-          <div v-for="element in forecast()" :key="element">
+          <div v-for="element in forecast" :key="element">
             <ForecastCard
               :hour="new Date(element.time).getHours()"
               :type="element.type"
@@ -195,7 +162,7 @@
       </div>
       <div className="flex overflow-x-scroll pb-10 hide-scroll-bar">
         <div className="flex flex-nowrap lg:ml-40 md:ml-20 ml-10 ">
-          <div v-for="element in historical()">
+          <div v-for="element in historical" :key="element">
             <HistoricalCard
               :hour="new Date(element.time).getHours()"
               :type="element.type"
@@ -230,4 +197,95 @@
 
     <MeasurementsTable />
   </div>
-</body>
+</template>
+
+<script>
+import ReportHistoricalDataForm from "./components/ReportHistoricalDataForm.vue";
+import WeatherCard from "./components/WeatherCard.vue";
+import MeasurementsTable from "./components/MeasurementsTable.vue";
+import ForecastCard from "./components/ForecastCard.vue";
+import HistoricalCard from "./components/HistoricalCard.vue";
+import * as moment from "moment";
+
+export default {
+  name: "App",
+  data: function () {
+    return {
+      moment,
+      cities: this.model.getCities(),
+      historicalData: this.model.historical(),
+      forecast: this.model.forecast(),
+      averageWindSpeed: this.model.averageWindSpeed()?.toFixed(2),
+      totalPrecipitations: this.model.totalPrecipitation()?.toFixed(2),
+      latestMeasurements: this.model.getLatestMeasurements(),
+      maximumTemperature: this.model.maximumTemperature(),
+      minimumTemperature: this.model.minimumTemperature(),
+    };
+  },
+
+  computed: {
+    city: {
+      get() {
+        return this.model.getCity();
+      },
+      set(v) {
+        this.model = this.model.setCity(v);
+      },
+    },
+    fromForecast: {
+      get() {
+        return this.model.getForecastInterval()[0];
+      },
+      set(v) {
+        this.model = this.model.setForecastInterval(
+          v,
+          this.model.getForecastInterval()[1]
+        );
+      },
+    },
+    toForecast: {
+      get() {
+        return this.model.getForecastInterval()[1];
+      },
+      set(v) {
+        this.model = this.model.setForecastInterval(
+          this.model.getForecastInterval()[0],
+          v
+        );
+      },
+    },
+    fromHistorical: {
+      get() {
+        return this.model.getHistoricalInterval()[0];
+      },
+      set(v) {
+        this.model = this.model.setHistoricalInterval(
+          v,
+          this.model.getHistoricalInterval()[1]
+        );
+      },
+    },
+    toHistorical: {
+      get() {
+        return this.model.getHistoricalInterval()[1];
+      },
+      set(v) {
+        this.model.setHistoricalInterval(
+          this.model.getHistoricalInterval()[0],
+          v
+        );
+      },
+    },
+  },
+  props: ["model"],
+  components: {
+    ReportHistoricalDataForm,
+    WeatherCard,
+    MeasurementsTable,
+    ForecastCard,
+    HistoricalCard,
+  },
+};
+</script>
+
+<style></style>
