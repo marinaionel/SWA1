@@ -197,7 +197,6 @@ const viewModel = (el, init_model) => {
         return new Date(v);
       },
       toHistorical: function (v) {
-        console.log(v);
         return new Date(v);
       },
     },
