@@ -1,5 +1,6 @@
 import { ajax } from "rxjs/ajax";
-import { map, delay, tap } from "rxjs/operators";
+import { map, takeUntil } from "rxjs/operators";
+import { timer } from "rxjs";
 import * as moment from "moment";
 
 console.log("Hello World!");
@@ -16,7 +17,17 @@ const poll_warnings = (time) =>
     .pipe(map((d) => d.warnings));
 
 //poll_all_warnings();
-poll_warnings(moment().add(-1, "days"))
-  .subscribe(console.log)
-  .delay(3000)
-  .unsubscribe();
+
+const time = 3000;
+
+//v1 with setTimeout
+let subscription = poll_warnings(moment().add(-1, "days")).subscribe(
+  console.log
+);
+setTimeout(() => {
+  subscription.unsubscribe();
+}, time);
+
+//v2 with takeUntil
+const timer$ = timer(time);
+poll_warnings(moment().add(-1, "days")).pipe(takeUntil(timer$));
