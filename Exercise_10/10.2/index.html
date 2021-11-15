@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+      import { fromEvent } from "https://dev.jspm.io/rxjs@6/_esm2015";
+      import {
+        map,
+        filter,
+        scan,
+        tap
+      } from "https://dev.jspm.io/rxjs@6/_esm2015/operators";
+
+      window.load = () => {
+        const input = document.getElementById("number");
+        const add = document.getElementById("add");
+        const sum = document.querySelector("#sum");
+
+        fromEvent(add, "click")
+          .pipe(
+            map(parseInt(input.value)),
+            tap(console.log),
+            filter((number) => number % 2),
+            scan((acc, curr) => acc + curr, 0)
+          )
+          .subscribe((v) => sum.innerHTML = v);
+      };
+    </script>
+  </head>
+  <body onload="load()">
+    <input type="number" id="number" />
+    <button id="add">Add</button>
+    <p>Sum of odd numbers: <p id="sum"></p></p>
+    <ul></ul>
+  </body>
+</html>
