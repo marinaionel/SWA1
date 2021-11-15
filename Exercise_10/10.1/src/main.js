@@ -1,21 +1,22 @@
 import { ajax } from "rxjs/ajax";
-import { interval, of, merge } from "rxjs";
-import {
-  pairwise,
-  filter,
-  map,
-  concatMap,
-  takeWhile,
-  first,
-  share,
-} from "rxjs/operators";
+import { map, delay, tap } from "rxjs/operators";
+import * as moment from "moment";
 
 console.log("Hello World!");
 
-const poll_warnings = () =>
+const poll_all_warnings = () =>
   ajax
     .getJSON("http://localhost:8080/warnings")
     .pipe(map((d) => d.warnings))
     .subscribe(console.log);
 
-poll_warnings();
+const poll_warnings = (time) =>
+  ajax
+    .getJSON(`http://localhost:8080/warnings/since/${time}`)
+    .pipe(map((d) => d.warnings));
+
+//poll_all_warnings();
+poll_warnings(moment().add(-1, "days"))
+  .subscribe(console.log)
+  .delay(3000)
+  .unsubscribe();

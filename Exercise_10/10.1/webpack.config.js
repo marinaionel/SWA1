@@ -13,7 +13,7 @@ module.exports = {
     new HtmlWebpackPlugin(),
     new webpack.ProgressPlugin(),
     new CleanWebpackPlugin(),
-    //new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin(),
   ],
   entry: ["babel-polyfill", "main.js"],
   output: {
