@@ -16,6 +16,7 @@
     <script src="https://unpkg.com/recursive-diff@latest/dist/recursive-diff.min.js"></script>
     <script>
       window.load = () => {
+        // these warnings include also historical warnings, on updates old warnings are not removed
         let warnings = [];
         let diffs = [];
         let minSeverity = 0;
